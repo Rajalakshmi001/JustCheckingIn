@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO: should add new event according to active tab
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -84,11 +85,14 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            // TODO: Should open Settings activity
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    // TODO: Move these inner classes to separate files
 
     /**
      * A placeholder fragment containing a simple view.
