@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            // TODO: Should open Settings activity
+            setContentView(R.layout.fragment_settings);
             return true;
         }
 

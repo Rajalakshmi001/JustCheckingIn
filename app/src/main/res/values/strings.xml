@@ -92,4 +92,16 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="general">GENERAL</string>
+    <string name="emergency_contact">Emergency Contact</string>
+    <string name="language">Language</string>
+    <string name="check_ins">CHECK-INS</string>
+    <string name="default_message">Default message</string>
+    <string name="checkin_default_message_text">Are you feeling ok?</string>
+    <string name="check_in_frequency_label">Check-In frequency</string>
+    <string name="check_in_reminder">Check-In reminder</string>
+    <string name="unresponse_limit">Unresponse limit</string>
+    <string name="reminders">REMINDERS</string>
+    <string name="appointments">APPOINTMENTS</string>
+    <string name="default_reminder">Default reminder</string>
 </resources>
