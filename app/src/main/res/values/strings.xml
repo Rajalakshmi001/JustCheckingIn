@@ -10,7 +10,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign In or register</string>
+    <string name="action_sign_in">Sign In or Register</string>
     <string name="action_sign_in_short">Sign In</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -25,16 +25,29 @@
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
+    <string name="pref_header_check_ins">Check-ins</string>
+    <string name="pref_header_reminders">Reminders</string>
+    <string name="pref_header_appointments">Appointments</string>
+    <string name="emergency_contact">Emergency contact</string>
+    <string name="language">Language</string>
+    <string name="default_message">Default message</string>
+    <string name="checkin_default_message_text">Are you feeling ok?</string>
+    <string name="check_in_frequency_label">Check-in frequency</string>
+    <string name="check_in_reminder">Check-in reminder</string>
+    <string name="unresponse_limit">Unresponse limit</string>
+    <string name="default_reminder">Default reminder</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
+    <!--TODO: add real string arrays for list preferences-->
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
+    <!--<string name="pref_title_social_recommendations">Enable social recommendations</string>-->
+    <!--<string name="pref_description_social_recommendations">Recommendations for people to contact-->
+    <!--based on your message history-->
+    <!--</string>-->
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <!--<string name="pref_title_display_name">Display name</string>-->
+    <!--<string name="pref_default_display_name">John Smith</string>-->
+
+    <!--<string name="pref_title_add_friends_to_messages">Add friends to messages</string>-->
     <string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>
@@ -45,6 +58,17 @@
         <item>0</item>
         <item>-1</item>
     </string-array>
+    <string name="title_activity_settings2">Settings</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
@@ -92,16 +116,52 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="general">GENERAL</string>
-    <string name="emergency_contact">Emergency Contact</string>
-    <string name="language">Language</string>
-    <string name="check_ins">CHECK-INS</string>
-    <string name="default_message">Default message</string>
-    <string name="checkin_default_message_text">Are you feeling ok?</string>
-    <string name="check_in_frequency_label">Check-In frequency</string>
-    <string name="check_in_reminder">Check-In reminder</string>
-    <string name="unresponse_limit">Unresponse limit</string>
-    <string name="reminders">REMINDERS</string>
-    <string name="appointments">APPOINTMENTS</string>
-    <string name="default_reminder">Default reminder</string>
+
+    <!--&lt;!&ndash; Example settings for Data & Sync &ndash;&gt;-->
+    <!--<string name="pref_header_data_sync">Data &amp; sync</string>-->
+
+    <!--<string name="pref_title_sync_frequency">Sync frequency</string>-->
+    <!--<string-array name="pref_sync_frequency_titles">-->
+    <!--<item>15 minutes</item>-->
+    <!--<item>30 minutes</item>-->
+    <!--<item>1 hour</item>-->
+    <!--<item>3 hours</item>-->
+    <!--<item>6 hours</item>-->
+    <!--<item>Never</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="pref_sync_frequency_values">-->
+    <!--<item>15</item>-->
+    <!--<item>30</item>-->
+    <!--<item>60</item>-->
+    <!--<item>180</item>-->
+    <!--<item>360</item>-->
+    <!--<item>-1</item>-->
+    <!--</string-array>-->
+
+    <!--<string-array name="list_preference_entries">-->
+    <!--<item>Entry 1</item>-->
+    <!--<item>Entry 2</item>-->
+    <!--<item>Entry 3</item>-->
+    <!--</string-array>-->
+
+    <!--<string-array name="list_preference_entry_values">-->
+    <!--<item>1</item>-->
+    <!--<item>2</item>-->
+    <!--<item>3</item>-->
+    <!--</string-array>-->
+
+    <!--<string-array name="multi_select_list_preference_default_value" />-->
+
+    <!--<string name="pref_title_system_sync_settings">System sync settings</string>-->
+
+    <!--&lt;!&ndash; Example settings for Notifications &ndash;&gt;-->
+    <!--<string name="pref_header_notifications">Notifications</string>-->
+
+    <!--<string name="pref_title_new_message_notifications">New message notifications</string>-->
+
+    <!--<string name="pref_title_ringtone">Ringtone</string>-->
+    <!--<string name="pref_ringtone_silent">Silent</string>-->
+
+    <!--<string name="pref_title_vibrate">Vibrate</string>-->
+
 </resources>

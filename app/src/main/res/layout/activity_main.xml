@@ -21,6 +21,7 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
             android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/colorPrimaryText"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/app_name">
@@ -30,7 +31,9 @@
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:tabTextColor="@color/colorPrimaryText"
+            app:tabSelectedTextColor="@color/colorPrimaryText">
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tab_check_in"

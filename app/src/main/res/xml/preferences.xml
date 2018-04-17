@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--TODO: these are just placeholders right now-->
+    <PreferenceCategory android:title="@string/pref_header_general">
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/pref_example_list_titles"
+            android:entryValues="@array/pref_example_list_values"
+            android:key="example_list"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/emergency_contact" />
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/pref_example_list_titles"
+            android:entryValues="@array/pref_example_list_values"
+            android:key="example_list"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/language" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_check_ins">
+
+        <EditTextPreference
+            android:capitalize="sentences"
+            android:defaultValue="@string/checkin_default_message_text"
+            android:inputType="textCapSentences"
+            android:key="example_text"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/default_message" />
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/pref_example_list_titles"
+            android:entryValues="@array/pref_example_list_values"
+            android:key="example_list"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/check_in_frequency_label" />
+
+        <EditTextPreference
+            android:capitalize="sentences"
+            android:inputType="textCapSentences"
+            android:key="example_text"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/check_in_reminder" />
+
+        <EditTextPreference
+            android:inputType="number"
+            android:key="1"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/unresponse_limit" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_reminders">
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_appointments">
+
+        <EditTextPreference
+            android:capitalize="sentences"
+            android:defaultValue="@string/default_reminder"
+            android:inputType="textCapSentences"
+            android:key="example_text"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/default_reminder" />
+    </PreferenceCategory>
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+
+
+</PreferenceScreen>

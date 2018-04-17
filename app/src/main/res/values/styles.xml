@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -19,7 +20,7 @@
 
     <style name="BorderStyle">
         <!--<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">-->
-            <!--<solid android:color="#ffffff" />-->
+        <!--<solid android:color="@color/colorPrimaryLight" />-->
             <!--<stroke android:width="1dip" android:color="#2a3c46" />-->
         <!--</shape>-->
     </style>
