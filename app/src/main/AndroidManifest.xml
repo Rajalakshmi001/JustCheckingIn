@@ -28,8 +28,8 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings2"></activity>
+            android:name=".settings.SettingsActivity"
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>
