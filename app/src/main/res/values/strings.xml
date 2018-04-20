@@ -36,6 +36,13 @@
     <string name="check_in_reminder">Check-in reminder</string>
     <string name="unresponse_limit">Unresponse limit</string>
     <string name="default_reminder">Default reminder</string>
+    <string name="today">Today</string>
+    <string name="default_check_in_status_text">You have not sent a check-in yet</string>
+    <string name="send_now">Send Now</string>
+    <string name="history_heading_text">HISTORY</string>
+    <string name="default_check_in_comment">Client is feeling fine!</string>
+    <string name="action_logout">Logout</string>
+    <string name="default_check_in_date">01/01/1982</string>
 
     <!--<string name="pref_title_social_recommendations">Enable social recommendations</string>-->
     <!--<string name="pref_description_social_recommendations">Recommendations for people to contact-->
