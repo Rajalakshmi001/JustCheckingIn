@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/reminders_today_recycler_view"
         android:layout_marginTop="5dp"
-        android:background="@color/colorSecondaryText"
+        android:background="@color/textColorSecondary"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:text="@string/upcoming_heading_text"
         android:textAppearance="?android:attr/textAppearanceMedium"

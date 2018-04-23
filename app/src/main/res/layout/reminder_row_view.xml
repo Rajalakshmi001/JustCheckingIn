@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
     card_view:cardBackgroundColor="@color/cardview_light_background"
-    card_view:cardCornerRadius="10dp">
+    card_view:cardCornerRadius="10dp"
+    card_view:cardElevation="1dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -29,7 +30,7 @@
             android:layout_toEndOf="@+id/reminder_icon"
             android:text="@string/default_reminder_text"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/colorPrimaryText" />
+            android:textColor="@color/textColorPrimary" />
 
         <TextView
             android:id="@+id/reminder_date_text"

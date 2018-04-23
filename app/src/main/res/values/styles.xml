@@ -6,7 +6,23 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorPrimaryLight</item>
+        <!--<item name="android:textColorPrimary">@color/textColorPrimary</item>-->
+        <!--<item name="android:textColorSecondary">@color/textColorSecondary</item>-->
+        <!--<item name="actionMenuTextColor">@color/textColorPrimary</item>-->
+        <!--<item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    </style>
+
+    <style name="SettingsTheme" parent="Theme.AppCompat.Light">
+        <!-- Override properties according to your need -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <!--<item name="android:textColorSecondary">@color/textColorSecondary</item>-->
+        <item name="android:colorBackground">@color/colorPrimaryLight</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -14,15 +30,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:actionMenuTextColor">@color/textColorPrimary</item>
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="BorderStyle">
-        <!--<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">-->
-        <!--<solid android:color="@color/colorPrimaryLight" />-->
-            <!--<stroke android:width="1dip" android:color="#2a3c46" />-->
-        <!--</shape>-->
-    </style>
 
 </resources>

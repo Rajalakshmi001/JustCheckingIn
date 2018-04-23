@@ -32,10 +32,10 @@
     <string name="language">Language</string>
     <string name="default_message">Default message</string>
     <string name="checkin_default_message_text">Are you feeling ok?</string>
-    <string name="check_in_frequency_label">Check-in frequency</string>
-    <string name="check_in_reminder">Check-in reminder</string>
-    <string name="unresponse_limit">Unresponse limit</string>
-    <string name="default_reminder">Default reminder</string>
+    <string name="check_in_frequency_label">Frequency</string>
+    <string name="check_in_reminder">Reminder time</string>
+    <string name="unresponse_limit">Client unresponse limit</string>
+    <string name="default_reminder">Default reminder time</string>
     <string name="today">Today</string>
     <string name="default_check_in_status_text">You have not sent a check-in yet</string>
     <string name="send_now">Send Now</string>

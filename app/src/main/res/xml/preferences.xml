@@ -8,7 +8,7 @@
             android:defaultValue="-1"
             android:entries="@array/pref_language_options"
             android:entryValues="@array/pref_language_options_values"
-            android:key="example_list"
+            android:key="@string/emergency_contact"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/emergency_contact" />
@@ -19,7 +19,8 @@
             android:entryValues="@array/pref_language_options_values"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/language" />
+            android:title="@string/language"
+            android:key="@string/language" />
 
     </PreferenceCategory>
 
@@ -29,7 +30,7 @@
             android:capitalize="sentences"
             android:defaultValue="@string/checkin_default_message_text"
             android:inputType="textCapSentences"
-            android:key="example_text"
+            android:key="@string/default_message"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
@@ -39,13 +40,14 @@
             android:defaultValue="-1"
             android:entries="@array/pref_check_in_freq_options"
             android:entryValues="@array/pref_check_in_freq_options_values"
-            android:key="example_list"
+            android:key="@string/check_in_frequency_label"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/check_in_frequency_label" />
 
         <edu.rosehulman.scottae.justcheckingin.settings.TimePreference
-            android:title="@string/check_in_reminder" />
+            android:title="@string/check_in_reminder"
+            android:key="@string/check_in_reminder" />
 
         <edu.rosehulman.scottae.justcheckingin.settings.NumberPickerPreference
             android:defaultValue="120"
@@ -64,7 +66,7 @@
             android:defaultValue="-1"
             android:entries="@array/pref_appointment_reminder_time_options"
             android:entryValues="@array/pref_appointment_reminder_time_options_values"
-            android:key="example_list"
+            android:key="@string/default_reminder"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/default_reminder" />

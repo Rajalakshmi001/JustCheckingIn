@@ -10,7 +10,9 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 
 import edu.rosehulman.scottae.justcheckingin.AppCompatPreferenceActivity;
 import edu.rosehulman.scottae.justcheckingin.R;
@@ -78,6 +80,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Helper method to determine if the device has an extra-large screen. For
      * example, 10" tablets are extra-large.
@@ -140,8 +153,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-//            bindPreferenceSummaryToValue(findPreference("example_text"));
-//            bindPreferenceSummaryToValue(findPreference("example_list"));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.emergency_contact)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.language)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.default_message)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.check_in_frequency_label)));
+//            FIXME: These values might be numbers; need to convert to Strings
+//            bindPreferenceSummaryToValue(findPreference(getString(R.string.check_in_reminder)));
+//            bindPreferenceSummaryToValue(findPreference(getString(R.string.unresponse_limit)));
+//            bindPreferenceSummaryToValue(findPreference(getString(R.string.default_reminder)));
         }
     }
 }
