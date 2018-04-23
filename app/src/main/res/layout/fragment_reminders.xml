@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryLight">
 
     <TextView
-        android:id="@+id/today_text"
+        android:id="@+id/reminders_today_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -18,49 +18,30 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorAccentDark" />
 
-    <TextView
-        android:id="@+id/check_in_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/today_text"
-        android:layout_below="@+id/today_text"
-
-        android:layout_marginTop="4dp"
-        android:text="@string/default_check_in_status_text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/colorPrimaryText" />
-
-    <Button
-        android:id="@+id/send_now_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="21dp"
-        android:layout_marginTop="99dp"
-        android:drawableLeft="@drawable/ic_send_black_24dp"
-        android:text="@string/send_now"
-        android:textSize="12sp" />
-
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/reminders_today_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/reminders_today_text"
+        android:layout_height="100dp"
+        tools:context="edu.rosehulman.scottae.justcheckingin.fragments.RemindersFragment" />
 
     <TextView
-        android:id="@+id/history_header"
+        android:id="@+id/reminders_upcoming_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="156dp"
+        android:layout_below="@+id/reminders_today_recycler_view"
+        android:layout_marginTop="5dp"
         android:background="@color/colorSecondaryText"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:text="@string/history_heading_text"
+        android:text="@string/upcoming_heading_text"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorAccentDark" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/check_in_recycler_view"
+        android:id="@+id/reminders_upcoming_recycler_view"
         android:layout_width="match_parent"
+        android:layout_below="@+id/reminders_upcoming_header"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/history_header"
-        tools:context="edu.rosehulman.scottae.justcheckingin.fragments.CheckInFragment" />
+        tools:context="edu.rosehulman.scottae.justcheckingin.fragments.RemindersFragment" />
 
 </RelativeLayout>

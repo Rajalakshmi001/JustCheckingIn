@@ -43,6 +43,8 @@
     <string name="default_check_in_comment">Client is feeling fine!</string>
     <string name="action_logout">Logout</string>
     <string name="default_check_in_date">01/01/1982</string>
+    <string name="upcoming_heading_text">UPCOMING</string>
+    <string name="default_reminder_text">Default reminder text</string>
 
     <!--<string name="pref_title_social_recommendations">Enable social recommendations</string>-->
     <!--<string name="pref_description_social_recommendations">Recommendations for people to contact-->
