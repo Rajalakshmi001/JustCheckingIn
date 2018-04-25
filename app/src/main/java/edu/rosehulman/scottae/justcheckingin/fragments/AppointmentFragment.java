@@ -8,28 +8,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import edu.rosehulman.scottae.justcheckingin.AppointmentListAdapter;
 import edu.rosehulman.scottae.justcheckingin.R;
-import edu.rosehulman.scottae.justcheckingin.ReminderListAdapter;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ReminderFragment extends Fragment {
+public class AppointmentFragment extends Fragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    public ReminderFragment() {
+    public AppointmentFragment() {
     }
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static ReminderFragment newInstance(int sectionNumber) {
-        ReminderFragment fragment = new ReminderFragment();
+    public static AppointmentFragment newInstance(int sectionNumber) {
+        AppointmentFragment fragment = new AppointmentFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -39,18 +39,18 @@ public class ReminderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_reminders, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_appointments, container, false);
 
         // today recycler view code
-        RecyclerView recyclerViewToday = rootView.findViewById(R.id.reminders_today_recycler_view);
+        RecyclerView recyclerViewToday = rootView.findViewById(R.id.appointments_today_recycler_view);
         recyclerViewToday.setLayoutManager(new LinearLayoutManager(getContext()));
-        ReminderListAdapter adapter = new ReminderListAdapter(getContext(), true);
+        AppointmentListAdapter adapter = new AppointmentListAdapter(getContext(), true);
         recyclerViewToday.setAdapter(adapter);
 
         // upcoming recycler view code
-        RecyclerView recyclerViewUpcoming = rootView.findViewById(R.id.reminders_upcoming_recycler_view);
+        RecyclerView recyclerViewUpcoming = rootView.findViewById(R.id.appointments_upcoming_recycler_view);
         recyclerViewUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
-        ReminderListAdapter adapter1 = new ReminderListAdapter(getContext(), false);
+        AppointmentListAdapter adapter1 = new AppointmentListAdapter(getContext(), false);
         recyclerViewUpcoming.setAdapter(adapter1);
         return rootView;
     }

@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import edu.rosehulman.scottae.justcheckingin.fragments.AppointmentFragment;
 import edu.rosehulman.scottae.justcheckingin.fragments.CheckInFragment;
 import edu.rosehulman.scottae.justcheckingin.fragments.ReminderFragment;
 import edu.rosehulman.scottae.justcheckingin.settings.SettingsActivity;
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return ReminderFragment.newInstance(position);
                 case 2:
-                    // TODO: return appointments
+                    return AppointmentFragment.newInstance(position);
                 default:
                     // TODO: change this?
                     return CheckInFragment.newInstance(position);

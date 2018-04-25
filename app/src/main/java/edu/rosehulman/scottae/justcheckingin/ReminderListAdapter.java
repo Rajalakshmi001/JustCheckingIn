@@ -10,16 +10,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapter.ViewHolder> {
 
     private ArrayList<Reminder> mReminders;
 
-    public ReminderListAdapter(Context context) {
+    public ReminderListAdapter(Context context, boolean isToday) {
         mReminders = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            mReminders.add(new Reminder("test", new Date(), true));
+
+        if (isToday) {
+            for (int i = 0; i < 3; i++) {
+                mReminders.add(new Reminder("test", new Date(), true));
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.DATE, -1);
+                Date date = cal.getTime();
+                mReminders.add(new Reminder("test", date, true));
+            }
         }
     }
 

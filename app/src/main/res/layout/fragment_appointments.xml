@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/appointments_relative_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryLight">
+
+    <TextView
+        android:id="@+id/appointments_today_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/today"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorAccentDark" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/appointments_today_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/appointments_today_text"
+        android:layout_height="100dp"
+        tools:context="edu.rosehulman.scottae.justcheckingin.fragments.AppointmentsFragment" />
+
+    <TextView
+        android:id="@+id/appointments_upcoming_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appointments_today_recycler_view"
+        android:layout_marginTop="5dp"
+        android:background="@color/textColorSecondary"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:text="@string/upcoming_heading_text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/colorAccentDark" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/appointments_upcoming_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/appointments_upcoming_header"
+        android:layout_height="wrap_content"
+        tools:context="edu.rosehulman.scottae.justcheckingin.fragments.AppointmentsFragment" />
+
+</RelativeLayout>

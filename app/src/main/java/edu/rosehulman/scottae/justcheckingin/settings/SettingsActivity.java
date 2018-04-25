@@ -2,7 +2,10 @@ package edu.rosehulman.scottae.justcheckingin.settings;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -10,8 +13,10 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import edu.rosehulman.scottae.justcheckingin.AppCompatPreferenceActivity;
@@ -50,6 +55,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         index >= 0
                                 ? listPreference.getEntries()[index]
                                 : null);
+                // TODO: summary for Emergency Contact preference
+//            } else if (preference.getKey() == R.string.emergency_contact){
 
             } else {
                 // For all other preferences, set the summary to the value's
@@ -143,6 +150,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class AllPreferencesFragment extends PreferenceFragment {
+        private final static int SELECT_PHONE_NUMBER = 1;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -157,10 +166,36 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(getString(R.string.language)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.default_message)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.check_in_frequency_label)));
+
+            Preference contactPref = findPreference(getString(R.string.emergency_contact));
+            contactPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+                    startActivityForResult(intent, SELECT_PHONE_NUMBER);
+                    return true;
+                }
+            });
 //            FIXME: These values might be numbers; need to convert to Strings
 //            bindPreferenceSummaryToValue(findPreference(getString(R.string.check_in_reminder)));
 //            bindPreferenceSummaryToValue(findPreference(getString(R.string.unresponse_limit)));
 //            bindPreferenceSummaryToValue(findPreference(getString(R.string.default_reminder)));
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (requestCode == SELECT_PHONE_NUMBER && resultCode == RESULT_OK) {
+                Uri contactUri = data.getData();
+                String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER};
+                Cursor cursor = getActivity().getContentResolver().query(contactUri, projection, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                    String number = cursor.getString(numberIndex);
+                    Log.e("PPP", "Phone number is: " + number);
+                }
+                cursor.close();
+            }
         }
     }
 }
