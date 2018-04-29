@@ -50,7 +50,6 @@
             android:key="@string/check_in_reminder" />
 
         <edu.rosehulman.scottae.justcheckingin.settings.NumberPickerPreference
-            android:defaultValue="120"
             android:key="@string/unresponse_limit"
             android:title="@string/unresponse_limit" />
 

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -35,6 +36,8 @@ import edu.rosehulman.scottae.justcheckingin.R;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
+    private static String contact = "None";
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -42,26 +45,28 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
+//            String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
                 ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
+                int index = listPreference.findIndexOfValue(value.toString());
 
                 // Set the summary to reflect the new value.
                 preference.setSummary(
                         index >= 0
                                 ? listPreference.getEntries()[index]
                                 : null);
-                // TODO: summary for Emergency Contact preference
-//            } else if (preference.getKey() == R.string.emergency_contact){
-
+            } else if (preference instanceof EditTextPreference) {
+                preference.setSummary(value.toString());
+            } else if (preference instanceof edu.rosehulman.scottae.justcheckingin.settings.NumberPickerPreference) {
+                preference.setSummary(String.valueOf(value));
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
-                preference.setSummary(stringValue);
+                // TODO: contact preference goes here
+                preference.setSummary(contact);
             }
             return true;
         }
@@ -122,10 +127,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+        if (preference instanceof edu.rosehulman.scottae.justcheckingin.settings.NumberPickerPreference) {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getInt(preference.getKey(), 0));
+        } else {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getString(preference.getKey(), ""));
+        }
     }
 
     /**
@@ -151,6 +163,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class AllPreferencesFragment extends PreferenceFragment {
         private final static int SELECT_PHONE_NUMBER = 1;
+        private Preference mPreference;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -173,13 +186,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceClick(Preference preference) {
                     Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+                    mPreference = preference;
                     startActivityForResult(intent, SELECT_PHONE_NUMBER);
+                    //preference.setSummary(contact);
                     return true;
                 }
             });
+//            contactPref.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+
 //            FIXME: These values might be numbers; need to convert to Strings
 //            bindPreferenceSummaryToValue(findPreference(getString(R.string.check_in_reminder)));
-//            bindPreferenceSummaryToValue(findPreference(getString(R.string.unresponse_limit)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.unresponse_limit)));
 //            bindPreferenceSummaryToValue(findPreference(getString(R.string.default_reminder)));
         }
 
@@ -188,13 +205,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             if (requestCode == SELECT_PHONE_NUMBER && resultCode == RESULT_OK) {
                 Uri contactUri = data.getData();
                 String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER};
+                String[] projection2 = new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME};
                 Cursor cursor = getActivity().getContentResolver().query(contactUri, projection, null, null, null);
+                Cursor cursor2 = getActivity().getContentResolver().query(contactUri, projection2, null, null, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                     String number = cursor.getString(numberIndex);
                     Log.e("PPP", "Phone number is: " + number);
+                    SettingsActivity.contact = number;
                 }
+                if (cursor2 != null && cursor2.moveToFirst()) {
+                    int nameIndex = cursor2.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                    String name = cursor2.getString(nameIndex);
+                    Log.e("PPP", "Name is: " + name);
+                    SettingsActivity.contact += name;
+                }
+                mPreference.setSummary(contact);
                 cursor.close();
+                cursor2.close();
             }
         }
     }
