@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import edu.rosehulman.scottae.justcheckingin.R;
-import edu.rosehulman.scottae.justcheckingin.ReminderListAdapter;
+import edu.rosehulman.scottae.justcheckingin.adapters.ReminderListAdapter;
 
 /**
  * A placeholder fragment containing a simple view.

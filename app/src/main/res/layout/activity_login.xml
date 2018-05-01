@@ -11,7 +11,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity">
+    tools:context=".activities.LoginActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -39,28 +39,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--<LinearLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-
             <TextView
                 android:id="@+id/more_info"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableRight="@android:drawable/ic_menu_info_details"
                 android:text="Log in as:"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:drawableRight="@android:drawable/ic_menu_info_details" />
-
-            <!--<ImageView-->
-            <!--android:id="@+id/more_info_button"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--app:srcCompat="@android:drawable/ic_menu_info_details" />-->
-            <!--</LinearLayout>-->
+                android:textAppearance="?android:textAppearanceMedium" />
 
             <ToggleButton
-                android:id="@+id/toggleButton"
+                android:id="@+id/userTypeButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textOff="Client"
@@ -70,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <AutoCompleteTextView
+                <EditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -105,13 +93,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
+                android:text="@string/action_sign_in_short"
                 android:textStyle="bold" />
 
-            <!--<com.google.android.gms.common.SignInButton-->
-            <!--android:id="@+id/google_sign_in_button"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content" />-->
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/google_sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </ScrollView>

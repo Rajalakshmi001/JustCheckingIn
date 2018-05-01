@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.rosehulman.scottae.justcheckingin.CheckInListAdapter;
 import edu.rosehulman.scottae.justcheckingin.R;
+import edu.rosehulman.scottae.justcheckingin.adapters.CheckInListAdapter;
 
 /**
  * A placeholder fragment containing a simple view.

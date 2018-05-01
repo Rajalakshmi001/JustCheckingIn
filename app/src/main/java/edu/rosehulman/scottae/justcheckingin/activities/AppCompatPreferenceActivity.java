@@ -1,4 +1,4 @@
-package edu.rosehulman.scottae.justcheckingin;
+package edu.rosehulman.scottae.justcheckingin.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

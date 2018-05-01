@@ -1,4 +1,4 @@
-package edu.rosehulman.scottae.justcheckingin;
+package edu.rosehulman.scottae.justcheckingin.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +15,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.fragments.AppointmentFragment;
 import edu.rosehulman.scottae.justcheckingin.fragments.CheckInFragment;
 import edu.rosehulman.scottae.justcheckingin.fragments.ReminderFragment;
 import edu.rosehulman.scottae.justcheckingin.settings.SettingsActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {//implements LoginActivity.OnLogoutListener, LoginActivity.OnLoginListener, GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -37,10 +40,17 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    /**
+     * For log out protocol
+     */
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAuth = FirebaseAuth.getInstance();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -66,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
     }
 
     @Override
@@ -87,10 +96,11 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
-//            setContentView(R.layout.fragment_settings);
             return true;
         } else if (id == R.id.action_logout) {
-            // TODO: do something
+            mAuth.signOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -117,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
                 case 2:
                     return AppointmentFragment.newInstance(position);
                 default:
-                    // TODO: change this?
                     return CheckInFragment.newInstance(position);
             }
         }

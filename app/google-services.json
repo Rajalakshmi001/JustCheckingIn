@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1091283940282",
+    "firebase_url": "https://just-checking-in.firebaseio.com",
+    "project_id": "just-checking-in",
+    "storage_bucket": "just-checking-in.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091283940282:android:4aae079356d52d71",
+        "android_client_info": {
+          "package_name": "edu.rosehulman.scottae.justcheckingin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1091283940282-n0r8ohbk9ope7r99rrtjes4mt492selg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.rosehulman.scottae.justcheckingin",
+            "certificate_hash": "348950322dcd3380e152317bc6eefc53e5d5abec"
+          }
+        },
+        {
+          "client_id": "1091283940282-loedsnkqkvgl7sqjdguqk6bo0lo98oj4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8egbmWTmjE20S62HsBHkEyuzUVZq-_nw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1091283940282-loedsnkqkvgl7sqjdguqk6bo0lo98oj4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

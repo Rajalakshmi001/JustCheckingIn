@@ -1,4 +1,4 @@
-package edu.rosehulman.scottae.justcheckingin;
+package edu.rosehulman.scottae.justcheckingin.models;
 
 import java.util.Date;
 

@@ -1,14 +1,17 @@
-package edu.rosehulman.scottae.justcheckingin;
+package edu.rosehulman.scottae.justcheckingin.models;
 
 import java.util.Date;
 
-public class Appointment {
+public class Reminder {
+
     private String mTitle;
     private Date mDate;
+    private boolean mIsRecurring;
 
-    public Appointment(String mTitle, Date mDate) {
+    public Reminder(String mTitle, Date mDate, boolean mIsRecurring) {
         this.mTitle = mTitle;
         this.mDate = mDate;
+        this.mIsRecurring = mIsRecurring;
     }
 
     public String getTitle() {
@@ -25,5 +28,13 @@ public class Appointment {
 
     public void setDate(Date mDate) {
         this.mDate = mDate;
+    }
+
+    public boolean isIsRecurring() {
+        return mIsRecurring;
+    }
+
+    public void setIsRecurring(boolean mIsRecurring) {
+        this.mIsRecurring = mIsRecurring;
     }
 }
