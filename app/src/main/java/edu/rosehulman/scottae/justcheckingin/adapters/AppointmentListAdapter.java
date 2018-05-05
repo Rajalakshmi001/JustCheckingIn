@@ -11,28 +11,36 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.models.Appointment;
 
 public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentListAdapter.ViewHolder> {
 
-    private ArrayList<Appointment> mAppointments;
+    private ArrayList<Appointment> mAppointmentsToday;
+    private ArrayList<Appointment> mAppointmentsUpcoming;
     private boolean mIsToday;
 
     public AppointmentListAdapter(Context context, boolean isToday) {
-        mAppointments = new ArrayList<>();
-        if (isToday) {
-            for (int i = 0; i < 3; i++) {
-                mAppointments.add(new Appointment("test", new Date()));
-            }
-        } else {
-            for (int i = 0; i < 4; i++) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.DATE, -1);
-                Date date = cal.getTime();
-                mAppointments.add(new Appointment("test", date));
+        mAppointmentsToday = new ArrayList<>();
+        mAppointmentsUpcoming = new ArrayList<>();
+        mIsToday = isToday;
+
+        // FIXME: this is just ad-hoc test data
+        // TODO: sort ArrayList data
+//        mRemindersToday.add(new Reminder("test", new Date()));
+        Random r = new Random();
+        for (int i = 0; i < 5; i++) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DATE, r.nextInt(4));
+            Date date = cal.getTime();
+
+            if (date.after(new Date())) {
+                mAppointmentsUpcoming.add(new Appointment("test", date));
+            } else {
+                mAppointmentsToday.add(new Appointment("test", date));
             }
         }
     }
@@ -46,14 +54,23 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
 
     @Override
     public void onBindViewHolder(@NonNull AppointmentListAdapter.ViewHolder holder, int position) {
-        final Appointment appointment = mAppointments.get(position);
+        Appointment appointment;
+        if (mIsToday) {
+            appointment = mAppointmentsToday.get(position);
+        } else {
+            appointment = mAppointmentsUpcoming.get(position);
+        }
         holder.mTitleView.setText(appointment.getTitle());
         holder.mDateView.setText(appointment.getDate().toString());
     }
 
     @Override
     public int getItemCount() {
-        return mAppointments.size();
+        if (mIsToday) {
+            return mAppointmentsToday.size();
+        } else {
+            return mAppointmentsUpcoming.size();
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

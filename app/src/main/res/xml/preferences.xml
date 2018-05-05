@@ -55,9 +55,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_reminders">
+    <!--<PreferenceCategory android:title="@string/pref_header_reminders">-->
 
-    </PreferenceCategory>
+    <!--</PreferenceCategory>-->
 
     <PreferenceCategory android:title="@string/pref_header_appointments">
 

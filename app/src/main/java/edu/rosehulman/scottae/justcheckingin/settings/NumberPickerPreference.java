@@ -14,8 +14,8 @@ import edu.rosehulman.scottae.justcheckingin.R;
 
 public class NumberPickerPreference extends DialogPreference {
 
-    public static final int DEFAULT_MAX_VALUE = 100;
-    public static final int DEFAULT_MIN_VALUE = 0;
+    public static final int DEFAULT_MAX_VALUE = 120;
+    public static final int DEFAULT_MIN_VALUE = 10;
     public static final boolean DEFAULT_WRAP_SELECTOR_WHEEL = true;
 
     private int minValue;

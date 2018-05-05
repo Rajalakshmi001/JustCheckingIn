@@ -22,7 +22,7 @@
         android:id="@+id/appointments_today_recycler_view"
         android:layout_width="match_parent"
         android:layout_below="@+id/appointments_today_text"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         tools:context="edu.rosehulman.scottae.justcheckingin.fragments.AppointmentsFragment" />
 
     <TextView

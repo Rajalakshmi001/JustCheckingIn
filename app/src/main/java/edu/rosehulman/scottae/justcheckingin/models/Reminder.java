@@ -6,12 +6,12 @@ public class Reminder {
 
     private String mTitle;
     private Date mDate;
-    private boolean mIsRecurring;
+//    private boolean mIsRecurring;
 
-    public Reminder(String mTitle, Date mDate, boolean mIsRecurring) {
+    public Reminder(String mTitle, Date mDate) {
         this.mTitle = mTitle;
         this.mDate = mDate;
-        this.mIsRecurring = mIsRecurring;
+//        this.mIsRecurring = mIsRecurring;
     }
 
     public String getTitle() {
@@ -30,11 +30,11 @@ public class Reminder {
         this.mDate = mDate;
     }
 
-    public boolean isIsRecurring() {
-        return mIsRecurring;
-    }
+//    public boolean isIsRecurring() {
+//        return mIsRecurring;
+//    }
 
-    public void setIsRecurring(boolean mIsRecurring) {
-        this.mIsRecurring = mIsRecurring;
-    }
+//    public void setIsRecurring(boolean mIsRecurring) {
+//        this.mIsRecurring = mIsRecurring;
+//    }
 }

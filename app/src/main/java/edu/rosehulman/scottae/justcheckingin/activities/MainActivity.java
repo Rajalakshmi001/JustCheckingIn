@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.fragments.AppointmentFragment;
@@ -41,14 +43,24 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
     private ViewPager mViewPager;
 
     /**
-     * For log out protocol
+     * Other fields
      */
     private FirebaseAuth mAuth;
+    private DatabaseReference mRef;
+    private String firebasePath;
+    public FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firebasePath = getIntent().getStringExtra("User Type");
+        if (firebasePath == null || firebasePath.isEmpty()) {
+            mRef = FirebaseDatabase.getInstance().getReference();
+        } else {
+            mRef = FirebaseDatabase.getInstance().getReference().child(firebasePath);
+        }
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -67,13 +79,12 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                // TODO: should add new Event according to active tab
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                // TODO: should start add dialog for current fragment
+                Snackbar.make(v, "action", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -95,6 +106,7 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra("Firebase path", firebasePath);
             startActivity(intent);
             return true;
         } else if (id == R.id.action_logout) {

@@ -44,6 +44,7 @@ public class CheckInFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         CheckInListAdapter adapter = new CheckInListAdapter(getContext());
         recyclerView.setAdapter(adapter);
+
         return rootView;
     }
 }

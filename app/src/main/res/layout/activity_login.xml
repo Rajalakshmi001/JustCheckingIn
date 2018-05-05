@@ -14,10 +14,17 @@
     tools:context=".activities.LoginActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/logo_image_view"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:srcCompat="@drawable/logo" />
+        android:layout_marginBottom="15dp"
+        android:contentDescription="@string/app_name"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:srcCompat="@drawable/logo">
+
+        <requestFocus />
+    </ImageView>
 
     <!-- Login progress -->
     <ProgressBar
@@ -48,7 +55,7 @@
                 android:textAppearance="?android:textAppearanceMedium" />
 
             <ToggleButton
-                android:id="@+id/userTypeButton"
+                android:id="@+id/user_type_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textOff="Client"
@@ -78,7 +85,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
-                    android:imeActionId="6"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
@@ -89,12 +95,11 @@
 
             <Button
                 android:id="@+id/email_sign_in_button"
-                style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in_short"
-                android:textStyle="bold" />
+                android:textAppearance="?android:textAppearanceButton" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/google_sign_in_button"

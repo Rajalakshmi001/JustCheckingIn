@@ -41,17 +41,17 @@ public class ReminderFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_reminders, container, false);
 
-        // today recycler view code
+        // today recycler view
         RecyclerView recyclerViewToday = rootView.findViewById(R.id.reminders_today_recycler_view);
         recyclerViewToday.setLayoutManager(new LinearLayoutManager(getContext()));
-        ReminderListAdapter adapter = new ReminderListAdapter(getContext(), true);
-        recyclerViewToday.setAdapter(adapter);
+        ReminderListAdapter adapterToday = new ReminderListAdapter(getContext(), true);
+        recyclerViewToday.setAdapter(adapterToday);
 
-        // upcoming recycler view code
+        // upcoming recycler view
         RecyclerView recyclerViewUpcoming = rootView.findViewById(R.id.reminders_upcoming_recycler_view);
         recyclerViewUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
-        ReminderListAdapter adapter1 = new ReminderListAdapter(getContext(), false);
-        recyclerViewUpcoming.setAdapter(adapter1);
+        ReminderListAdapter adapterUpcoming = new ReminderListAdapter(getContext(), false);
+        recyclerViewUpcoming.setAdapter(adapterUpcoming);
         return rootView;
     }
 }
