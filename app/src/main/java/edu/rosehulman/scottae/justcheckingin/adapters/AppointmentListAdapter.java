@@ -82,6 +82,8 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             super(itemView);
             mTitleView = itemView.findViewById(R.id.appointment_title);
             mDateView = itemView.findViewById(R.id.appointment_date_text);
+
+            // TODO: add OnLongClickListener
         }
     }
 }

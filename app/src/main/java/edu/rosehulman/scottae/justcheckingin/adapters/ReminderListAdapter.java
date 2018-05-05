@@ -82,6 +82,8 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
             super(itemView);
             mCommentView = itemView.findViewById(R.id.reminder_comment);
             mDateView = itemView.findViewById(R.id.reminder_date_text);
+
+            // TODO: add OnLongClickListener
         }
     }
 }
