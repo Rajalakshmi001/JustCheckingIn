@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import edu.rosehulman.scottae.justcheckingin.R;
+import edu.rosehulman.scottae.justcheckingin.utils.Constants;
 
 /**
  * A login screen that offers login via email/password and Google account.
@@ -149,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
     private void switchToMainActivity(String path) {
         // TODO: connect to user's database path and add user type
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("User Type", path);
+        intent.putExtra(Constants.USER_TAG, path);
         startActivity(intent);
     }
 

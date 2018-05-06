@@ -21,6 +21,8 @@ public class ReminderFragment extends Fragment {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    private static String mUserPath;
+
     public ReminderFragment() {
     }
 
@@ -28,7 +30,8 @@ public class ReminderFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static ReminderFragment newInstance(int sectionNumber) {
+    public static ReminderFragment newInstance(int sectionNumber, String userPath) {
+        mUserPath = userPath;
         ReminderFragment fragment = new ReminderFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -44,13 +47,13 @@ public class ReminderFragment extends Fragment {
         // today recycler view
         RecyclerView recyclerViewToday = rootView.findViewById(R.id.reminders_today_recycler_view);
         recyclerViewToday.setLayoutManager(new LinearLayoutManager(getContext()));
-        ReminderListAdapter adapterToday = new ReminderListAdapter(getContext(), true);
+        ReminderListAdapter adapterToday = new ReminderListAdapter(getContext(), mUserPath, true);
         recyclerViewToday.setAdapter(adapterToday);
 
         // upcoming recycler view
         RecyclerView recyclerViewUpcoming = rootView.findViewById(R.id.reminders_upcoming_recycler_view);
         recyclerViewUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
-        ReminderListAdapter adapterUpcoming = new ReminderListAdapter(getContext(), false);
+        ReminderListAdapter adapterUpcoming = new ReminderListAdapter(getContext(), mUserPath, false);
         recyclerViewUpcoming.setAdapter(adapterUpcoming);
         return rootView;
     }

@@ -12,7 +12,7 @@
         <ListPreference
             android:defaultValue="-1"
             android:entries="@array/pref_language_options"
-            android:entryValues="@array/pref_language_options_values"
+            android:entryValues="@array/pref_language_options"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/language"
@@ -35,7 +35,7 @@
         <ListPreference
             android:defaultValue="-1"
             android:entries="@array/pref_check_in_freq_options"
-            android:entryValues="@array/pref_check_in_freq_options_values"
+            android:entryValues="@array/pref_check_in_freq_options"
             android:key="@string/check_in_frequency_label"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
@@ -60,7 +60,7 @@
         <ListPreference
             android:defaultValue="-1"
             android:entries="@array/pref_appointment_reminder_time_options"
-            android:entryValues="@array/pref_appointment_reminder_time_options_values"
+            android:entryValues="@array/pref_appointment_reminder_time_options"
             android:key="@string/default_reminder"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"

@@ -24,6 +24,7 @@ import edu.rosehulman.scottae.justcheckingin.fragments.AppointmentFragment;
 import edu.rosehulman.scottae.justcheckingin.fragments.CheckInFragment;
 import edu.rosehulman.scottae.justcheckingin.fragments.ReminderFragment;
 import edu.rosehulman.scottae.justcheckingin.settings.SettingsActivity;
+import edu.rosehulman.scottae.justcheckingin.utils.Constants;
 
 public class MainActivity extends AppCompatActivity {//implements LoginActivity.OnLogoutListener, LoginActivity.OnLoginListener, GoogleApiClient.OnConnectionFailedListener {
 
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
      */
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
-    private String firebasePath;
+    private String mUserPath;
     public FloatingActionButton mFab;
 
     @Override
@@ -55,11 +56,11 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        firebasePath = getIntent().getStringExtra("User Type");
-        if (firebasePath == null || firebasePath.isEmpty()) {
+        mUserPath = getIntent().getStringExtra(Constants.USER_TAG);
+        if (mUserPath == null || mUserPath.isEmpty()) {
             mRef = FirebaseDatabase.getInstance().getReference();
         } else {
-            mRef = FirebaseDatabase.getInstance().getReference().child(firebasePath);
+            mRef = FirebaseDatabase.getInstance().getReference().child(mUserPath);
         }
 
         mAuth = FirebaseAuth.getInstance();
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
-            intent.putExtra("Firebase path", firebasePath);
+            intent.putExtra(Constants.USER_TAG, mUserPath);
             startActivity(intent);
             return true;
         } else if (id == R.id.action_logout) {
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
                 case 0:
                     return CheckInFragment.newInstance(position);
                 case 1:
-                    return ReminderFragment.newInstance(position);
+                    return ReminderFragment.newInstance(position, mUserPath);
                 case 2:
                     return AppointmentFragment.newInstance(position);
                 default:

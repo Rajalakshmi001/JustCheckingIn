@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.Locale;
 
 import edu.rosehulman.scottae.justcheckingin.R;
+import edu.rosehulman.scottae.justcheckingin.utils.Constants;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -41,7 +42,7 @@ import edu.rosehulman.scottae.justcheckingin.R;
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
     private static String contact = "None";
-    private DatabaseReference mRef;
+    private static DatabaseReference mRef;
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -50,7 +51,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
-//            String stringValue = value.toString();
+
+            mRef.child(preference.getKey()).setValue(value);
 
             if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
@@ -75,6 +77,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // For contact preference, set the summary to the value's
                 // simple string representation.
                 preference.setSummary(contact);
+                mRef.child(preference.getKey()).setValue(contact);
             }
             return true;
         }
@@ -87,7 +90,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new AllPreferencesFragment())
                 .commit();
-        String firebasePath = getIntent().getStringExtra("User Type");
+        String firebasePath = getIntent().getStringExtra(Constants.USER_TAG);
         if (firebasePath == null || firebasePath.isEmpty()) {
             mRef = FirebaseDatabase.getInstance().getReference();
         } else {
@@ -145,7 +148,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     PreferenceManager
                             .getDefaultSharedPreferences(preference.getContext())
-                            .getInt(preference.getKey(), 0));
+                            .getInt(preference.getKey(), 10));
         } else {
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     PreferenceManager
@@ -234,6 +237,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
 
                 mPreference.setSummary(contact);
+                mRef.child(mPreference.getKey()).setValue(contact);
                 cursorNumber.close();
                 cursorName.close();
             }
