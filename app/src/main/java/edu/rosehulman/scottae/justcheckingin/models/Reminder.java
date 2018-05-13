@@ -1,12 +1,14 @@
 package edu.rosehulman.scottae.justcheckingin.models;
 
+import android.support.annotation.NonNull;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Reminder {
+public class Reminder implements Comparable<Reminder> {
 
     private String mTitle;
     private Date mDate;
@@ -19,7 +21,6 @@ public class Reminder {
     public Reminder(String mTitle, Date mDate) {
         this.mTitle = mTitle;
         this.mDate = mDate;
-//        this.mIsRecurring = mIsRecurring;
     }
 
     public String getTitle() {
@@ -48,9 +49,6 @@ public class Reminder {
         this.mDate = mDate;
     }
 
-    // TODO: might have to add time
-
-
     public String getKey() {
         return mKey;
     }
@@ -63,5 +61,10 @@ public class Reminder {
         mTitle = r.getTitle();
         mDate = r.getDate();
         mKey = r.getKey();
+    }
+
+    @Override
+    public int compareTo(@NonNull Reminder o) {
+        return this.getDate().compareTo(o.getDate());
     }
 }

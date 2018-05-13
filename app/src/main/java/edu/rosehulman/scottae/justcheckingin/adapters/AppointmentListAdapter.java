@@ -27,9 +27,8 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         mAppointmentsUpcoming = new ArrayList<>();
         mIsToday = isToday;
 
-        // FIXME: this is just ad-hoc test data
+        // NOTE: this is just ad-hoc test data
         // TODO: sort ArrayList data
-//        mRemindersToday.add(new Reminder("test", new Date()));
         Random r = new Random();
         for (int i = 0; i < 5; i++) {
             Calendar cal = Calendar.getInstance();

@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
     }
 
     private void switchToMainActivity(String path) {
-        // TODO: connect to user's database path and add user type
+        // TODO: persist user's database path and user type after restart
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.USER_TAG, path);
         startActivity(intent);

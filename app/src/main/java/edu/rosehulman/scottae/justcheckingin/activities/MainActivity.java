@@ -3,7 +3,6 @@ package edu.rosehulman.scottae.justcheckingin.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +26,7 @@ import edu.rosehulman.scottae.justcheckingin.fragments.ReminderFragment;
 import edu.rosehulman.scottae.justcheckingin.settings.SettingsActivity;
 import edu.rosehulman.scottae.justcheckingin.utils.Constants;
 
-public class MainActivity extends AppCompatActivity {//implements LoginActivity.OnLogoutListener, LoginActivity.OnLoginListener, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
     private String mUserPath;
-    public FloatingActionButton mFab;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +85,15 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
             @Override
             public void onClick(View v) {
                 // TODO: should start add dialog for current fragment
-                Snackbar.make(v, "action", Snackbar.LENGTH_SHORT).show();
+                switch (mViewPager.getCurrentItem()) {
+                    case 0: // check-in
+                        Toast.makeText(MainActivity.this, "check-in", Toast.LENGTH_LONG).show();
+                        break;
+                    case 1: // reminder
+                        ReminderFragment.showAddEditReminderDialog(null, null);
+                        break;
+                    case 2: // appointment
+                }
             }
         });
     }
@@ -124,7 +132,7 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -136,7 +144,7 @@ public class MainActivity extends AppCompatActivity {//implements LoginActivity.
                 case 0:
                     return CheckInFragment.newInstance(position);
                 case 1:
-                    return ReminderFragment.newInstance(position, mUserPath);
+                    return ReminderFragment.newInstance(MainActivity.this, position, mUserPath);
                 case 2:
                     return AppointmentFragment.newInstance(position);
                 default:

@@ -15,13 +15,14 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.MenuItem;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Locale;
 
@@ -48,45 +49,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-
-            mRef.child(preference.getKey()).setValue(value);
-
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(value.toString());
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-            } else if (preference instanceof EditTextPreference) {
-                preference.setSummary(value.toString());
-            } else if (preference instanceof NumberPickerPreference) {
-                preference.setSummary(String.format(Locale.getDefault(),
-                        "%d minutes after Check-In", (int) value));
-            } else if (preference instanceof TimePreference) {
-                // TODO: correct to show am/pm
-                preference.setSummary(String.valueOf(value));
-            } else {
-                // For contact preference, set the summary to the value's
-                // simple string representation.
-                preference.setSummary(contact);
-                mRef.child(preference.getKey()).setValue(contact);
-            }
-            return true;
-        }
-    };
+    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener;
+//    private Preference mPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new AllPreferencesFragment())
                 .commit();
@@ -96,6 +66,40 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         } else {
             mRef = FirebaseDatabase.getInstance().getReference().child(firebasePath).child("settings");
         }
+
+        sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+
+                // FIXME: doesn't update Firebase
+                if (preference instanceof ListPreference) {
+                    // For list preferences, look up the correct display value in
+                    // the preference's 'entries' list.
+                    ListPreference listPreference = (ListPreference) preference;
+                    int index = listPreference.findIndexOfValue(value.toString());
+
+                    // Set the summary to reflect the new value.
+                    preference.setSummary(
+                            index >= 0
+                                    ? listPreference.getEntries()[index]
+                                    : null);
+                } else if (preference instanceof EditTextPreference) {
+                    preference.setSummary(value.toString());
+                } else if (preference instanceof NumberPickerPreference) {
+                    preference.setSummary(String.format(Locale.getDefault(),
+                            "%d minutes after Check-In", (int) value));
+                } else if (preference instanceof TimePreference) {
+                    // TODO: format nicely
+                    preference.setSummary(String.valueOf(value));
+//                } else {
+                    // For contact preference, set the summary to the value's
+                    // simple string representation.
+//                    preference.setSummary(contact);
+//                    mRef.child(preference.getKey()).setValue(contact);
+                }
+                return true;
+            }
+        };
     }
 
     /**
@@ -109,16 +113,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            // Respond to the action bar's Up/Home button
+//            case android.R.id.home:
+//                NavUtils.navigateUpFromSameTask(this);
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * Helper method to determine if the device has an extra-large screen. For
@@ -138,28 +142,50 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      *
      * @see #sBindPreferenceSummaryToValueListener
      */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
+    private static void bindPreferenceSummaryToValue(final Preference preference) {
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
+        mRef.child(preference.getKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (preference instanceof NumberPickerPreference)
+                    return;
+                Log.e("AAA", "dataSnapshot: " + dataSnapshot.getValue());
+                sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                        (dataSnapshot.getValue() == null)
+                                ? PreferenceManager
+                                .getDefaultSharedPreferences(preference.getContext())
+                                .getString(preference.getKey(), "")
+                                : dataSnapshot.getValue()
+                );
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // do nothing
+            }
+        });
+
+//        mRef.child(preference.getKey()).removeEventListener();
+
         // Trigger the listener immediately with the preference's
         // current value.
-        if (preference instanceof NumberPickerPreference) {
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.getContext())
-                            .getInt(preference.getKey(), 10));
-        } else {
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.getContext())
-                            .getString(preference.getKey(), ""));
-        }
+//        if (preference instanceof NumberPickerPreference) {
+//            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+//                    PreferenceManager
+//                            .getDefaultSharedPreferences(preference.getContext())
+//                            .getInt(preference.getKey(), 10));
+//        } else {
+//            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+//                    (mRef.child(preference.getKey()) != null)
+//                            ? mRef.child(preference.getKey()).
+//                            : PreferenceManager
+//                            .getDefaultSharedPreferences(preference.getContext())
+//                            .getString(preference.getKey(), ""));
+//        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean onIsMultiPane() {
         return isXLargeTablet(this);
@@ -214,6 +240,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
+        public void onDestroy() {
+            super.onDestroy();
+            sBindPreferenceSummaryToValueListener = null;
+        }
+
+        @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             if (requestCode == SELECT_PHONE_NUMBER && resultCode == RESULT_OK) {
                 Uri contactUri = data.getData();
@@ -223,7 +255,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 if (cursorName != null && cursorName.moveToFirst()) {
                     int nameIndex = cursorName.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
                     String name = cursorName.getString(nameIndex);
-                    Log.e("PPP", "Name is: " + name);
                     SettingsActivity.contact = name;
                 }
 
@@ -232,7 +263,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 if (cursorNumber != null && cursorNumber.moveToFirst()) {
                     int numberIndex = cursorNumber.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                     String number = cursorNumber.getString(numberIndex);
-                    Log.e("PPP", "Phone number is: " + number);
                     SettingsActivity.contact += ": " + number;
                 }
 

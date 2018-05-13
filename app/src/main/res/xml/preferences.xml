@@ -10,7 +10,7 @@
             android:title="@string/emergency_contact" />
 
         <ListPreference
-            android:defaultValue="-1"
+            android:defaultValue="0"
             android:entries="@array/pref_language_options"
             android:entryValues="@array/pref_language_options"
             android:negativeButtonText="@null"
@@ -33,7 +33,7 @@
             android:title="@string/default_message" />
 
         <ListPreference
-            android:defaultValue="-1"
+            android:defaultValue="0"
             android:entries="@array/pref_check_in_freq_options"
             android:entryValues="@array/pref_check_in_freq_options"
             android:key="@string/check_in_frequency_label"
@@ -58,7 +58,7 @@
     <PreferenceCategory android:title="@string/pref_header_appointments">
 
         <ListPreference
-            android:defaultValue="-1"
+            android:defaultValue="0"
             android:entries="@array/pref_appointment_reminder_time_options"
             android:entryValues="@array/pref_appointment_reminder_time_options"
             android:key="@string/default_reminder"

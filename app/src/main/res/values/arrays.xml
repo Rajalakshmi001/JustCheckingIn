@@ -9,11 +9,11 @@
     </string-array>
 
     <string-array name="pref_language_options_values">
-        <item>-1</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </string-array>
 
     <string-array name="pref_check_in_freq_options">
@@ -24,10 +24,10 @@
     </string-array>
 
     <string-array name="pref_check_in_freq_options_values">
-        <item>-1</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="pref_appointment_reminder_time_options">
@@ -44,7 +44,6 @@
     </string-array>
 
     <string-array name="pref_appointment_reminder_time_options_values">
-        <item>-1</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -54,6 +53,7 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+        <item>9</item>
     </string-array>
 
     <string-array name="event_context_menu">

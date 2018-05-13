@@ -15,29 +15,35 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import edu.rosehulman.scottae.justcheckingin.R;
+import edu.rosehulman.scottae.justcheckingin.fragments.ReminderFragment;
 import edu.rosehulman.scottae.justcheckingin.models.Reminder;
 
 public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapter.ViewHolder> {
 
+    private Context mContext;
     private ArrayList<Reminder> mRemindersToday;
     private ArrayList<Reminder> mRemindersUpcoming;
     private boolean mIsToday;
     private DatabaseReference mRef;
 
     public ReminderListAdapter(Context context, String userPath, boolean isToday) {
+        mContext = context;
         mRemindersToday = new ArrayList<>();
         mRemindersUpcoming = new ArrayList<>();
         mIsToday = isToday;
+        Log.d("AAA", "user path" + userPath);
         mRef = FirebaseDatabase.getInstance().getReference().child(userPath).child("reminders");
         mRef.keepSynced(true);
         mRef.addChildEventListener(new RemindersChildEventListener());
 
-        // FIXME: this is just ad-hoc test data
-        // TODO: sort ArrayList data
+        // NOTE: this is just ad-hoc test data
 //        Random r = new Random();
 //        for (int i = 0; i < 5; i++) {
 //            Calendar cal = Calendar.getInstance();
@@ -72,7 +78,7 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
         } else {
             reminder = mRemindersUpcoming.get(position);
         }
-        holder.mCommentView.setText(reminder.getTitle());
+        holder.mTitleView.setText(reminder.getTitle());
         holder.mDateView.setText(reminder.getDate().toString());
     }
 
@@ -87,16 +93,41 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mCommentView;
+        TextView mTitleView;
         TextView mDateView;
 
         ViewHolder(View itemView) {
             super(itemView);
-            mCommentView = itemView.findViewById(R.id.reminder_comment);
+            mTitleView = itemView.findViewById(R.id.reminder_comment);
             mDateView = itemView.findViewById(R.id.reminder_date_text);
 
-            // TODO: add OnLongClickListener
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    ReminderFragment.showAddEditReminderDialog(mTitleView.getText().toString(),
+                            convertStringToDate(mDateView.getText().toString()));
+                    return true;
+                }
+            });
         }
+    }
+
+    // FIXME: not sending accurate Date object
+    private static Date convertStringToDate(String s) {
+        Log.e("AAA", "Current date: " + s);
+        DateFormat format = DateFormat.getDateInstance();
+        try {
+            Date date = format.parse(s);
+            Log.e("AAA", "Sent date: " + date.toString());
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void addReminder(Reminder reminder) {
+        mRef.push().setValue(reminder);
     }
 
     private class RemindersChildEventListener implements ChildEventListener {
@@ -107,22 +138,35 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
             assert reminder != null;
             reminder.setKey(dataSnapshot.getKey());
             if (mIsToday) {
-                if (reminder.getDate(reminder.getDate()).equals(reminder.getDate(new Date())))
+                if (reminder.getDate(reminder.getDate()).equals(reminder.getDate(new Date()))) {
                     mRemindersToday.add(0, reminder);
+                    Collections.sort(mRemindersToday);
+                }
             } else if (!reminder.getDate(reminder.getDate()).equals(reminder.getDate(new Date()))) {
                 mRemindersUpcoming.add(0, reminder);
+                Collections.sort(mRemindersUpcoming);
             }
-            notifyItemInserted(0);
+            notifyDataSetChanged();
         }
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
             String key = dataSnapshot.getKey();
             Reminder updateReminder = dataSnapshot.getValue(Reminder.class);
-//            for (Reminder r : mMyPics) {
-//                if (r.getKey().equals(key)) {
-//                    r.setValues(updateReminder);
-//                    notifyDataSetChanged();
+//            if (updateReminder.getDate(updateReminder.getDate())
+//                    .equals(updateReminder.getDate(new Date()))) {
+//                for (Reminder r : mRemindersToday) {
+//                    if (r.getKey().equals(key)) {
+//                        r.setValues(updateReminder);
+//                        notifyDataSetChanged();
+//                    }
+//                }
+//            } else {
+//                for (Reminder r : mRemindersUpcoming) {
+//                    if (r.getKey().equals(key)) {
+//                        r.setValues(updateReminder);
+//                        notifyDataSetChanged();
+//                    }
 //                }
 //            }
         }
