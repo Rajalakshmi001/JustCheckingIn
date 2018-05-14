@@ -18,6 +18,7 @@ import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,7 +51,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * to reflect its new value.
      */
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener;
-//    private Preference mPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
 
-                // FIXME: doesn't update Firebase
                 if (preference instanceof ListPreference) {
                     // For list preferences, look up the correct display value in
                     // the preference's 'entries' list.
@@ -89,14 +88,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     preference.setSummary(String.format(Locale.getDefault(),
                             "%d minutes after Check-In", (int) value));
                 } else if (preference instanceof TimePreference) {
-                    // TODO: format nicely
                     preference.setSummary(String.valueOf(value));
-//                } else {
-                    // For contact preference, set the summary to the value's
-                    // simple string representation.
-//                    preference.setSummary(contact);
-//                    mRef.child(preference.getKey()).setValue(contact);
                 }
+                mRef.child(preference.getKey()).setValue(value.toString());
                 return true;
             }
         };
@@ -113,16 +107,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            // Respond to the action bar's Up/Home button
-//            case android.R.id.home:
-//                NavUtils.navigateUpFromSameTask(this);
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     /**
      * Helper method to determine if the device has an extra-large screen. For
@@ -151,14 +135,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (preference instanceof NumberPickerPreference)
                     return;
-                Log.e("AAA", "dataSnapshot: " + dataSnapshot.getValue());
-                sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                        (dataSnapshot.getValue() == null)
-                                ? PreferenceManager
-                                .getDefaultSharedPreferences(preference.getContext())
-                                .getString(preference.getKey(), "")
-                                : dataSnapshot.getValue()
-                );
+                else
+                    if  (dataSnapshot.getValue() != null)
+                        preference.setSummary(dataSnapshot.getValue().toString());
             }
 
             @Override
@@ -166,25 +145,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // do nothing
             }
         });
-
-//        mRef.child(preference.getKey()).removeEventListener();
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-//        if (preference instanceof NumberPickerPreference) {
-//            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-//                    PreferenceManager
-//                            .getDefaultSharedPreferences(preference.getContext())
-//                            .getInt(preference.getKey(), 10));
-//        } else {
-//            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-//                    (mRef.child(preference.getKey()) != null)
-//                            ? mRef.child(preference.getKey()).
-//                            : PreferenceManager
-//                            .getDefaultSharedPreferences(preference.getContext())
-//                            .getString(preference.getKey(), ""));
-//        }
     }
+
 
     @Override
     public boolean onIsMultiPane() {
@@ -254,8 +216,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 Cursor cursorName = getActivity().getContentResolver().query(contactUri, projectionName, null, null, null);
                 if (cursorName != null && cursorName.moveToFirst()) {
                     int nameIndex = cursorName.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                    String name = cursorName.getString(nameIndex);
-                    SettingsActivity.contact = name;
+                    SettingsActivity.contact = cursorName.getString(nameIndex);
                 }
 
                 String[] projectionNumber = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER};
@@ -268,7 +229,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 mPreference.setSummary(contact);
                 mRef.child(mPreference.getKey()).setValue(contact);
+                assert cursorNumber != null;
                 cursorNumber.close();
+                assert cursorName != null;
                 cursorName.close();
             }
         }
