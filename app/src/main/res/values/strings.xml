@@ -43,5 +43,14 @@
     <string name="default_check_in_date">01/01/1982</string>
     <string name="upcoming_heading_text">UPCOMING</string>
     <string name="default_reminder_text">Default reminder text</string>
+    <string name="new_reminder_title_text">New Reminder</string>
+    <string name="edit_reminder_title_text">Edit Reminder</string>
+    <string name="enter_a_title_dialog_message">Enter a title</string>
+    <string name="next_button">Next</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="empty_reminder_deletion_warning_message">Empty reminder can\'t be deleted</string>
+    <string name="done_button_text">Done</string>
+    <string name="invalid_date_time_toast_text">Invalid date and time!</string>
+    <string name="reminders_text">reminders</string>
 
 </resources>

@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "check-in", Toast.LENGTH_LONG).show();
                         break;
                     case 1: // reminder
-                        ReminderFragment.showAddEditReminderDialog(null, null);
+                        ReminderFragment.showAddEditReminderDialog(null);
                         break;
                     case 2: // appointment
                 }

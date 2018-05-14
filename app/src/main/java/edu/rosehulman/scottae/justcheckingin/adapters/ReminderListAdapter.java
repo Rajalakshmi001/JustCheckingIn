@@ -32,102 +32,16 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
     private ArrayList<Reminder> mRemindersUpcoming;
     private boolean mIsToday;
     private DatabaseReference mRef;
+    private Reminder mReminder;
 
     public ReminderListAdapter(Context context, String userPath, boolean isToday) {
         mContext = context;
         mRemindersToday = new ArrayList<>();
         mRemindersUpcoming = new ArrayList<>();
         mIsToday = isToday;
-        Log.d("AAA", "user path" + userPath);
-        mRef = FirebaseDatabase.getInstance().getReference().child(userPath).child("reminders");
+        mRef = FirebaseDatabase.getInstance().getReference().child(userPath).child(mContext.getString(R.string.reminders_text));
         mRef.keepSynced(true);
         mRef.addChildEventListener(new RemindersChildEventListener());
-
-        // NOTE: this is just ad-hoc test data
-//        Random r = new Random();
-//        for (int i = 0; i < 5; i++) {
-//            Calendar cal = Calendar.getInstance();
-//            cal.setTime(new Date());
-//            cal.add(Calendar.DATE, r.nextInt(4));
-//            Date date = cal.getTime();
-//
-//            if (date.after(new Date())) {
-//                Reminder reminder = new Reminder("test", date);
-//                mRemindersUpcoming.add(reminder);
-//                mRef.push().setValue(reminder);
-//            } else {
-//                Reminder reminder = new Reminder("test", date);
-//                mRemindersToday.add(reminder);
-//                mRef.push().setValue(reminder);
-//            }
-//        }
-    }
-
-    @NonNull
-    @Override
-    public ReminderListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reminder_row_view, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ReminderListAdapter.ViewHolder holder, int position) {
-        Reminder reminder;
-        if (mIsToday) {
-            reminder = mRemindersToday.get(position);
-        } else {
-            reminder = mRemindersUpcoming.get(position);
-        }
-        holder.mTitleView.setText(reminder.getTitle());
-        holder.mDateView.setText(reminder.getDate().toString());
-    }
-
-    @Override
-    public int getItemCount() {
-        if (mIsToday) {
-            return mRemindersToday.size();
-        } else {
-            return mRemindersUpcoming.size();
-        }
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-
-        TextView mTitleView;
-        TextView mDateView;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            mTitleView = itemView.findViewById(R.id.reminder_comment);
-            mDateView = itemView.findViewById(R.id.reminder_date_text);
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    ReminderFragment.showAddEditReminderDialog(mTitleView.getText().toString(),
-                            convertStringToDate(mDateView.getText().toString()));
-                    return true;
-                }
-            });
-        }
-    }
-
-    // FIXME: not sending accurate Date object
-    private static Date convertStringToDate(String s) {
-        Log.e("AAA", "Current date: " + s);
-        DateFormat format = DateFormat.getDateInstance();
-        try {
-            Date date = format.parse(s);
-            Log.e("AAA", "Sent date: " + date.toString());
-            return date;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void addReminder(Reminder reminder) {
-        mRef.push().setValue(reminder);
     }
 
     private class RemindersChildEventListener implements ChildEventListener {
@@ -153,33 +67,49 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
             String key = dataSnapshot.getKey();
             Reminder updateReminder = dataSnapshot.getValue(Reminder.class);
-//            if (updateReminder.getDate(updateReminder.getDate())
-//                    .equals(updateReminder.getDate(new Date()))) {
-//                for (Reminder r : mRemindersToday) {
-//                    if (r.getKey().equals(key)) {
-//                        r.setValues(updateReminder);
-//                        notifyDataSetChanged();
-//                    }
-//                }
-//            } else {
-//                for (Reminder r : mRemindersUpcoming) {
-//                    if (r.getKey().equals(key)) {
-//                        r.setValues(updateReminder);
-//                        notifyDataSetChanged();
-//                    }
-//                }
-//            }
+            if (updateReminder.getDate(updateReminder.getDate())
+                    .equals(updateReminder.getDate(new Date()))) {
+                for (Reminder r : mRemindersToday) {
+                    if (r.getKey().equals(key)) {
+                        r.setValues(updateReminder);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            } else {
+                for (Reminder r : mRemindersUpcoming) {
+                    if (r.getKey().equals(key)) {
+                        r.setValues(updateReminder);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            }
         }
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
             String key = dataSnapshot.getKey();
-//            for (Reminder r : mMyPics) {
-//                if (r.getKey().equals(key)) {
-//                    mMyPics.remove(r);
-//                    notifyDataSetChanged();
-//                }
-//            }
+            Reminder toBeDeletedReminder = dataSnapshot.getValue(Reminder.class);
+            assert toBeDeletedReminder != null;
+            if (toBeDeletedReminder.getDate(toBeDeletedReminder.getDate())
+                    .equals(toBeDeletedReminder.getDate(new Date()))) {
+                for (Reminder r : mRemindersToday) {
+                    if (r.getKey().equals(key)) {
+                        mRemindersToday.remove(r);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            } else {
+                for (Reminder r : mRemindersUpcoming) {
+                    if (r.getKey().equals(key)) {
+                        mRemindersUpcoming.remove(r);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            }
         }
 
         @Override
@@ -191,5 +121,80 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
         public void onCancelled(DatabaseError databaseError) {
             Log.e("Database error", databaseError.getMessage());
         }
+    }
+
+    @NonNull
+    @Override
+    public ReminderListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reminder_row_view, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ReminderListAdapter.ViewHolder holder, int position) {
+        if (mIsToday) {
+            mReminder = mRemindersToday.get(position);
+        } else {
+            mReminder = mRemindersUpcoming.get(position);
+        }
+        holder.mTitleView.setText(mReminder.getTitle());
+        holder.mDateView.setText(mReminder.getDate().toString());
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ReminderFragment.showAddEditReminderDialog(mReminder);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mIsToday) {
+            return mRemindersToday.size();
+        } else {
+            return mRemindersUpcoming.size();
+        }
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView mTitleView;
+        TextView mDateView;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            mTitleView = itemView.findViewById(R.id.reminder_comment);
+            mDateView = itemView.findViewById(R.id.reminder_date_text);
+        }
+    }
+
+//    // FIXME: not sending accurate Date object
+//    private static Date convertStringToDate(String s) {
+//        Log.e("AAA", "Current date: " + s);
+//        DateFormat format = DateFormat.getDateInstance();
+//        try {
+//            Date date = format.parse(s);
+//            Log.e("AAA", "Sent date: " + date.toString());
+//            return date;
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
+    public void addReminder(Reminder reminder) {
+        mRef.push().setValue(reminder);
+    }
+
+    public void remove(Reminder reminder) {
+        mRef.child(reminder.getKey()).removeValue();
+    }
+
+    public void update(Reminder reminder, String title, Date date) {
+        reminder.setTitle(title);
+        reminder.setDate(date);
+        mRef.child(reminder.getKey()).setValue(reminder);
     }
 }
