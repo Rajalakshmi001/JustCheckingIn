@@ -8,12 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Random;
 
 import edu.rosehulman.scottae.justcheckingin.R;
+import edu.rosehulman.scottae.justcheckingin.fragments.AppointmentFragment;
 import edu.rosehulman.scottae.justcheckingin.models.Appointment;
 
 public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentListAdapter.ViewHolder> {
@@ -21,26 +27,96 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     private ArrayList<Appointment> mAppointmentsToday;
     private ArrayList<Appointment> mAppointmentsUpcoming;
     private boolean mIsToday;
+    private Context mContext;
+    private DatabaseReference mRef;
+    private  Appointment mAppointment;
 
-    public AppointmentListAdapter(Context context, boolean isToday) {
+    public AppointmentListAdapter(Context context, String userPath, boolean isToday) {
+        mContext = context;
         mAppointmentsToday = new ArrayList<>();
         mAppointmentsUpcoming = new ArrayList<>();
         mIsToday = isToday;
+        mRef = FirebaseDatabase.getInstance().getReference().child(userPath).child(mContext.getString(R.string.appointments));
+        mRef.keepSynced(true);
+        mRef.addChildEventListener(new AppointmentsChildEventListener());
+    }
 
-        // NOTE: this is just ad-hoc test data
-        // TODO: sort ArrayList data
-        Random r = new Random();
-        for (int i = 0; i < 5; i++) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, r.nextInt(4));
-            Date date = cal.getTime();
+    private class AppointmentsChildEventListener implements ChildEventListener {
 
-            if (date.after(new Date())) {
-                mAppointmentsUpcoming.add(new Appointment("test", date));
-            } else {
-                mAppointmentsToday.add(new Appointment("test", date));
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            Appointment appointment = dataSnapshot.getValue(Appointment.class);
+            assert appointment != null;
+            appointment.setKey(dataSnapshot.getKey());
+            if (mIsToday) {
+                if (appointment.getDate(appointment.getDate()).equals(appointment.getDate(new Date()))) {
+                    mAppointmentsToday.add(0, appointment);
+                    Collections.sort(mAppointmentsToday);
+                }
+            } else if (!appointment.getDate(appointment.getDate()).equals(appointment.getDate(new Date()))) {
+                mAppointmentsUpcoming.add(0, appointment);
+                Collections.sort(mAppointmentsUpcoming);
             }
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            String key = dataSnapshot.getKey();
+            Appointment updateAppointment = dataSnapshot.getValue(Appointment.class);
+            if (updateAppointment.getDate(updateAppointment.getDate())
+                    .equals(updateAppointment.getDate(new Date()))) {
+                for (Appointment r : mAppointmentsToday) {
+                    if (r.getKey().equals(key)) {
+                        r.setValues(updateAppointment);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            } else {
+                for (Appointment r : mAppointmentsUpcoming) {
+                    if (r.getKey().equals(key)) {
+                        r.setValues(updateAppointment);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            String key = dataSnapshot.getKey();
+            Appointment toBeDeletedAppointment = dataSnapshot.getValue(Appointment.class);
+            assert toBeDeletedAppointment != null;
+            if (toBeDeletedAppointment.getDate(toBeDeletedAppointment.getDate())
+                    .equals(toBeDeletedAppointment.getDate(new Date()))) {
+                for (Appointment r : mAppointmentsToday) {
+                    if (r.getKey().equals(key)) {
+                        mAppointmentsToday.remove(r);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            } else {
+                for (Appointment r : mAppointmentsUpcoming) {
+                    if (r.getKey().equals(key)) {
+                        mAppointmentsUpcoming.remove(r);
+                        notifyDataSetChanged();
+                        return;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
     }
 
@@ -53,14 +129,22 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
 
     @Override
     public void onBindViewHolder(@NonNull AppointmentListAdapter.ViewHolder holder, int position) {
-        Appointment appointment;
         if (mIsToday) {
-            appointment = mAppointmentsToday.get(position);
+            mAppointment = mAppointmentsToday.get(position);
         } else {
-            appointment = mAppointmentsUpcoming.get(position);
+            mAppointment = mAppointmentsUpcoming.get(position);
         }
-        holder.mTitleView.setText(appointment.getTitle());
-        holder.mDateView.setText(appointment.getDate().toString());
+        holder.mTitleView.setText(mAppointment.getTitle());
+        holder.mDateView.setText(mAppointment.getDate().toString());
+        holder.mCommentsView.setText(mAppointment.getComments());
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AppointmentFragment.showAddEditAppointmentDialog(mAppointment);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -76,13 +160,29 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
 
         TextView mTitleView;
         TextView mDateView;
+        TextView mCommentsView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mTitleView = itemView.findViewById(R.id.appointment_title);
             mDateView = itemView.findViewById(R.id.appointment_date_text);
+            mCommentsView = itemView.findViewById(R.id.appointment_comments_text);
 
-            // TODO: add OnLongClickListener
         }
+    }
+
+    public  void addAppointment(Appointment appointment) {
+        mRef.push().setValue(appointment);
+    }
+
+    public void remove(Appointment appointment) {
+        mRef.child(appointment.getKey()).removeValue();
+    }
+
+    public void update(Appointment appointment, String title, Date date, String comments) {
+        appointment.setTitle(title);
+        appointment.setDate(date);
+        appointment.setComments(comments);
+        mRef.child(appointment.getKey()).setValue(appointment);
     }
 }

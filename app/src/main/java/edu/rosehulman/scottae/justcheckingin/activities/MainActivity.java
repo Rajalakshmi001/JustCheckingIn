@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                         ReminderFragment.showAddEditReminderDialog(null);
                         break;
                     case 2: // appointment
+                        AppointmentFragment.showAddEditAppointmentDialog(null);
+                        break;
                 }
             }
         });
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return ReminderFragment.newInstance(MainActivity.this, position, mUserPath);
                 case 2:
-                    return AppointmentFragment.newInstance(position);
+                    return AppointmentFragment.newInstance(MainActivity.this, position, mUserPath);
                 default:
                     return CheckInFragment.newInstance(position);
             }

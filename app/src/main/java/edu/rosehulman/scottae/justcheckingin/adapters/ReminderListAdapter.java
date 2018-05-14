@@ -170,20 +170,6 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
         }
     }
 
-//    // FIXME: not sending accurate Date object
-//    private static Date convertStringToDate(String s) {
-//        Log.e("AAA", "Current date: " + s);
-//        DateFormat format = DateFormat.getDateInstance();
-//        try {
-//            Date date = format.parse(s);
-//            Log.e("AAA", "Sent date: " + date.toString());
-//            return date;
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-
     public void addReminder(Reminder reminder) {
         mRef.push().setValue(reminder);
     }
