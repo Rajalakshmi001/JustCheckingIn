@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +43,7 @@ public class ReminderFragment extends Fragment
     private static ReminderListAdapter adapterUpcoming;
     private static EditText titleEditText;
     private static Calendar mCalendar;
+    private static Reminder reminderForUpdate;
 
     public ReminderFragment() {
     }
@@ -82,50 +82,63 @@ public class ReminderFragment extends Fragment
         return rootView;
     }
 
-    public static void showAddEditReminderDialog(String title, final Date date) {
+    public static void showAddEditReminderDialog(final Reminder reminder) {
+        reminderForUpdate = reminder;
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("New Reminder");
-        builder.setMessage("Enter a title");
+        builder.setTitle((reminder == null ? mContext.getString(R.string.new_reminder_title_text) : mContext.getString(R.string.edit_reminder_title_text)));
+        builder.setMessage(R.string.enter_a_title_dialog_message);
         titleEditText = new EditText(mContext);
         titleEditText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        titleEditText.setText(title == null ? "" : title);
         builder.setView(titleEditText);
-        builder.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+
+        if (reminder != null) {
+            titleEditText.setText(reminder.getTitle());
+        }
+        builder.setPositiveButton(R.string.next_button, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 mCalendar = Calendar.getInstance();
-                if (date != null)
-                    mCalendar.setTime(date);
-                Log.e("AAA", "Recieved date: " + mCalendar.getTime().toString());
+                if (reminder != null) {
+                    mCalendar.setTime(reminder.getDate());
+                }
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         new ReminderFragment(), mCalendar
                 );
-                dpd.setOkText("Next");
-                dpd.setMinDate(mCalendar);
+                dpd.setOkText(R.string.next_button);
                 dpd.show(((MainActivity) mContext).getFragmentManager(), "Datepickerdialog");
             }
         });
-        // TODO: add delete button
-        builder.setNeutralButton("Delete", null);
+        builder.setNeutralButton(R.string.delete_button_text, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (reminderForUpdate != null) {
+                    if (reminderForUpdate.getDate(reminderForUpdate.getDate()).equals(reminderForUpdate.getDate(new Date()))) {
+                        adapterToday.remove(reminderForUpdate);
+                    } else {
+                        adapterUpcoming.remove(reminderForUpdate);
+                    }
+                }else {
+                    Toast.makeText(mContext, R.string.empty_reminder_deletion_warning_message, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.create().show();
     }
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        Log.e("AAA", "You picked the following date: " + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
         TimePickerDialog tpd = TimePickerDialog.newInstance(this, false);
         mCalendar.set(year, monthOfYear, dayOfMonth);
         tpd.setInitialSelection(mCalendar.get(Calendar.HOUR), mCalendar.get(Calendar.MINUTE));
-        tpd.setOkText("Done");
+        tpd.setOkText(R.string.done_button_text);
         tpd.show(view.getFragmentManager(), "Timepickerdialog");
     }
 
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        Log.e("AAA", "You picked the following time: " + hourOfDay + ":" + minute);
         mCalendar.set(mCalendar.get(Calendar.YEAR),
                 mCalendar.get(Calendar.MONTH),
                 mCalendar.get(Calendar.DAY_OF_MONTH),
@@ -134,11 +147,17 @@ public class ReminderFragment extends Fragment
                 0);
         Reminder r = new Reminder(titleEditText.getText().toString(), mCalendar.getTime());
         if (r.getDate().before(new Date())) {
-            Toast.makeText(mContext, "Invalid date and time!", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, R.string.invalid_date_time_toast_text, Toast.LENGTH_LONG).show();
         } else if (r.getDate(r.getDate()).equals(r.getDate(new Date()))) {
-            adapterToday.addReminder(r);
+            if (reminderForUpdate != null)
+                adapterToday.update(reminderForUpdate, r.getTitle(), r.getDate());
+            else
+                adapterToday.addReminder(r);
         } else {
-            adapterUpcoming.addReminder(r);
+            if (reminderForUpdate != null)
+                adapterUpcoming.update(reminderForUpdate, r.getTitle(), r.getDate());
+            else
+                adapterUpcoming.addReminder(r);
         }
     }
 }
