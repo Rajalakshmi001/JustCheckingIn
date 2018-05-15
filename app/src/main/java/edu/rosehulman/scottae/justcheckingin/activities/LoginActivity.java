@@ -32,6 +32,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.utils.Constants;
@@ -47,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
     private static final int RC_SIGN_IN = 1;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private DatabaseReference mRef; // TODO
     private OnCompleteListener mOnCompleteListener;
     private GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "TAG";
@@ -65,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mRef = FirebaseDatabase.getInstance().getReference().child("groups");
+
         mUserType = findViewById(R.id.user_type_button);
         mEmailView = findViewById(R.id.email);
         mPasswordView = findViewById(R.id.password);
@@ -79,6 +88,12 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
             }
         });
         Button loginButton = findViewById(R.id.email_sign_in_button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login();
+            }
+        });
 
         mEmailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -100,19 +115,13 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
                 return false;
             }
         });
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login();
-            }
-        });
 
         TextView mMoreInfo = findViewById(R.id.more_info);
         mMoreInfo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                builder.setTitle("Are you a Carer or Client?");
+                builder.setTitle("User Types");
                 // TODO: edit more info dialog
                 builder.setMessage("Carers ...\nClients ...");
                 builder.create().show();
@@ -128,11 +137,30 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                Log.d(TAG, "User: " + ((user == null) ? "none" : user.getEmail()));
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    boolean isCarer = mUserType.isChecked();
-                    switchToMainActivity((isCarer ? "carers/" : "clients/") + user.getUid());
+                    String chosenType = mUserType.isChecked() ? "carer" : "client";
+                    Query userTypeQuery = mRef.orderByChild(user.getUid()).equalTo(chosenType);
+                    userTypeQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.e("AAA", "User found: " + dataSnapshot.toString());
+                            if (!dataSnapshot.exists()) {
+                                mAuth.signOut();
+                                showLoginError("Wrong user type!");
+                            } else {
+                                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                    switchToMainActivity(dataSnapshot.getKey()
+                                            + "/" + child.getKey());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // do nothing
+                        }
+                    });
                 }
             }
         };
@@ -148,7 +176,6 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
     }
 
     private void switchToMainActivity(String path) {
-        // TODO: persist user's database path and user type after restart
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.USER_TAG, path);
         startActivity(intent);
@@ -211,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        Log.d(TAG, "firebaseAuthWithGoogle: " + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
