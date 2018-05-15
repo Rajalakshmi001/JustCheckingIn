@@ -144,13 +144,13 @@ public class MainActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    return CheckInFragment.newInstance(position);
+                    return CheckInFragment.newInstance(MainActivity.this, position, mUserPath);
                 case 1:
                     return ReminderFragment.newInstance(MainActivity.this, position, mUserPath);
                 case 2:
                     return AppointmentFragment.newInstance(MainActivity.this, position, mUserPath);
                 default:
-                    return CheckInFragment.newInstance(position);
+                    return CheckInFragment.newInstance(MainActivity.this, position, mUserPath);
             }
         }
 

@@ -161,5 +161,4 @@ public class ReminderFragment extends Fragment
                 adapterUpcoming.addReminder(r);
         }
     }
-
 }
