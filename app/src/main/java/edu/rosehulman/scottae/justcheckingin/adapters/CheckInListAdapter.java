@@ -1,7 +1,11 @@
 package edu.rosehulman.scottae.justcheckingin.adapters;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -11,22 +15,89 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 
 import edu.rosehulman.scottae.justcheckingin.R;
+import edu.rosehulman.scottae.justcheckingin.activities.DisplayReminderNotification;
+import edu.rosehulman.scottae.justcheckingin.fragments.CheckInFragment;
 import edu.rosehulman.scottae.justcheckingin.models.CheckIn;
 
 public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.ViewHolder> {
 
     private ArrayList<CheckIn> mCheckIns;
     private Context mContext;
+    private static final String KEY_REMINDER_TITLE = "KEY_REMINDER_TITLE";
+    private DatabaseReference mCheckinRef;
+    private static DatabaseReference mRef;
+    public static String defaultMessage = "";
 
-    public CheckInListAdapter(Context context) {
+    public CheckInListAdapter(Context context, String userPath) {
         mContext = context;
         mCheckIns = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            mCheckIns.add(new CheckIn("test", new Date()));
+        mRef = FirebaseDatabase.getInstance().getReference().child(userPath).child("settings/Default message");
+        mRef.addValueEventListener(new CheckinDefaultMessageEventListener());
+        mRef.keepSynced(true);
+        mCheckinRef = FirebaseDatabase.getInstance().getReference()
+                .child(userPath).child("checkins");
+        mCheckinRef.keepSynced(true);
+        mCheckinRef.addChildEventListener(new CheckInChildEventListener());
+    }
+
+    private class  CheckInChildEventListener implements ChildEventListener {
+
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            CheckIn checkIn = dataSnapshot.getValue(CheckIn.class);
+            mCheckIns.add(checkIn);
+            Collections.sort(mCheckIns);
+            setSoonAlarm(defaultMessage);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    }
+
+    public static class CheckinDefaultMessageEventListener implements ValueEventListener {
+
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if(dataSnapshot != null){
+                defaultMessage = Objects.requireNonNull(dataSnapshot.getValue()).toString();
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
     }
 
@@ -58,33 +129,32 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
             super(itemView);
             mCommentView = itemView.findViewById(R.id.check_in_comment);
             mDateView = itemView.findViewById(R.id.check_in_date_text);
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    final CharSequence[] items = mContext.getResources().getStringArray(R.array.event_context_menu);
-
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
-                    // TODO: replace with actual actions
-                    builder.setItems(items, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int item) {
-                            switch (item) {
-                                case 0:
-                                    Toast.makeText(builder.getContext(), "edit", Toast.LENGTH_SHORT).show();
-                                    return;
-                                case 1:
-                                    Toast.makeText(builder.getContext(), "delete", Toast.LENGTH_SHORT).show();
-                                    return;
-                                default:
-                                    Toast.makeText(builder.getContext(), "cancelled", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                    builder.show();
-                    return true;
-                }
-            });
         }
+    }
+
+    public void add(CheckIn checkIn) {
+        mCheckinRef.push().setValue(checkIn);
+    }
+
+    private void setSoonAlarm(String  defaultMessage) {
+        Intent displayIntent = new Intent(mContext,
+                DisplayReminderNotification.class);
+        displayIntent.putExtra(KEY_REMINDER_TITLE,  defaultMessage);
+
+        Notification notification = getNotification(displayIntent, defaultMessage);
+        NotificationManager manager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.notify(1, notification);
+    }
+
+    private Notification getNotification(Intent intent, String message) {
+        Notification.Builder builder = new Notification.Builder(mContext);
+        builder.setContentTitle("Just Checking-in!");
+        builder.setContentText(message);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        int unusedRequestCode = 0;
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, unusedRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        return builder.build();
     }
 }
