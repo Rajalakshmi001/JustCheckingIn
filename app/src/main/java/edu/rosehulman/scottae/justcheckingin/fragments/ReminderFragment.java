@@ -82,17 +82,17 @@ public class ReminderFragment extends Fragment
         return rootView;
     }
 
-    public static void showAddEditReminderDialog(final Reminder reminder) {
+    public static void showAddEditReminderDialog(Reminder reminder) {
         reminderForUpdate = reminder;
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle((reminder == null ? mContext.getString(R.string.new_reminder_title_text) : mContext.getString(R.string.edit_reminder_title_text)));
+        builder.setTitle(reminderForUpdate == null ? mContext.getString(R.string.new_reminder_title_text) : mContext.getString(R.string.edit_reminder_title_text));
         builder.setMessage(R.string.enter_a_title_dialog_message);
         titleEditText = new EditText(mContext);
         titleEditText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         builder.setView(titleEditText);
 
-        if (reminder != null) {
-            titleEditText.setText(reminder.getTitle());
+        if (reminderForUpdate != null) {
+            titleEditText.setText(reminderForUpdate.getTitle());
         }
         builder.setPositiveButton(R.string.next_button, new DialogInterface.OnClickListener() {
 
@@ -100,8 +100,8 @@ public class ReminderFragment extends Fragment
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 mCalendar = Calendar.getInstance();
-                if (reminder != null) {
-                    mCalendar.setTime(reminder.getDate());
+                if (reminderForUpdate != null) {
+                    mCalendar.setTime(reminderForUpdate.getDate());
                 }
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         new ReminderFragment(), mCalendar
@@ -152,14 +152,13 @@ public class ReminderFragment extends Fragment
             if (reminderForUpdate != null)
                 adapterToday.update(reminderForUpdate, r.getTitle(), r.getDate());
             else
-                adapterToday.addReminder(r);
+                adapterToday.add(r);
 
         } else {
             if (reminderForUpdate != null)
                 adapterUpcoming.update(reminderForUpdate, r.getTitle(), r.getDate());
             else
-                adapterUpcoming.addReminder(r);
+                adapterUpcoming.add(r);
         }
     }
-
 }
