@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
@@ -43,7 +44,7 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
     public static final String KEY_REMINDER_TITLE = "KEY_REMINDER_TITLE";
     public static final String KEY_NOTIFICATION = "KEY_NOTIFICATION";
     public static final String KEY_SOON_NOTIFICATION_ID = "KEY_SOON_NOTIFICATION_ID";
-    public static final int SECONDS_UNTIL_ALARM = 120;
+    private static  long SECONDS_UNTIL_ALARM = 0;
 
 
     public ReminderListAdapter(Context context, String userPath, boolean isToday) {
@@ -85,6 +86,7 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
                 for (Reminder r : mRemindersToday) {
                     if (r.getKey().equals(key)) {
                         r.setValues(updateReminder);
+                        setSoonAlarm(updateReminder);
                         notifyDataSetChanged();
                         return;
                     }
@@ -93,6 +95,7 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
                 for (Reminder r : mRemindersUpcoming) {
                     if (r.getKey().equals(key)) {
                         r.setValues(updateReminder);
+                        setSoonAlarm(updateReminder);
                         notifyDataSetChanged();
                         return;
                     }
@@ -209,12 +212,13 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
         notificationIntent.putExtra(KEY_SOON_NOTIFICATION_ID, 1);
         int unusedRequestCode = 0;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, unusedRequestCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        long futureInMills = SystemClock.elapsedRealtime() + SECONDS_UNTIL_ALARM * 1000;
-        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        assert alarmManager != null;
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMills, pendingIntent);
-//        NotificationManager manager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-//        manager.notify(1, notification);
+        SECONDS_UNTIL_ALARM = findDifference(r);
+        if (SECONDS_UNTIL_ALARM > 0) {
+            long futureInMills = SystemClock.elapsedRealtime() + SECONDS_UNTIL_ALARM * 1000;
+            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+            assert alarmManager != null;
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMills, pendingIntent);
+        }
     }
 
     private Notification getNotification(Intent intent, Reminder r) {
@@ -226,5 +230,13 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, unusedRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         return builder.build();
+    }
+
+    private long findDifference(Reminder r ) {
+        Calendar calendar = Calendar.getInstance();
+        Date d1 = calendar.getTime();
+        Date d2 = r.getDate();
+        long diff = d2.getTime() - d1.getTime();
+        return  (diff /  (60*1000) % 60) * 60;
     }
 }
