@@ -44,10 +44,10 @@ public class ReminderFragment extends Fragment
     private static EditText titleEditText;
     private static Calendar mCalendar;
     private static Reminder reminderForUpdate;
+    private Reminder r;
 
     public ReminderFragment() {
     }
-
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -145,7 +145,7 @@ public class ReminderFragment extends Fragment
                 hourOfDay,
                 minute,
                 0);
-        Reminder r = new Reminder(titleEditText.getText().toString(), mCalendar.getTime());
+        r = new Reminder(titleEditText.getText().toString(), mCalendar.getTime());
         if (r.getDate().before(new Date())) {
             Toast.makeText(mContext, R.string.invalid_date_time_toast_text, Toast.LENGTH_LONG).show();
         } else if (r.getDate(r.getDate()).equals(r.getDate(new Date()))) {
@@ -153,6 +153,7 @@ public class ReminderFragment extends Fragment
                 adapterToday.update(reminderForUpdate, r.getTitle(), r.getDate());
             else
                 adapterToday.addReminder(r);
+
         } else {
             if (reminderForUpdate != null)
                 adapterUpcoming.update(reminderForUpdate, r.getTitle(), r.getDate());
@@ -160,4 +161,5 @@ public class ReminderFragment extends Fragment
                 adapterUpcoming.addReminder(r);
         }
     }
+
 }
