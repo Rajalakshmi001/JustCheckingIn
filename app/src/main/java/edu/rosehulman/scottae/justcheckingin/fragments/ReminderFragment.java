@@ -110,20 +110,19 @@ public class ReminderFragment extends Fragment
                 dpd.show(((MainActivity) mContext).getFragmentManager(), "Datepickerdialog");
             }
         });
-        builder.setNeutralButton(R.string.delete_button_text, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (reminderForUpdate != null) {
-                    if (reminderForUpdate.getDate(reminderForUpdate.getDate()).equals(reminderForUpdate.getDate(new Date()))) {
+        if (reminderForUpdate != null) {
+            builder.setNeutralButton(R.string.delete_button_text, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (reminderForUpdate.getDate(reminderForUpdate.getDate())
+                            .equals(reminderForUpdate.getDate(new Date()))) {
                         adapterToday.remove(reminderForUpdate);
                     } else {
                         adapterUpcoming.remove(reminderForUpdate);
                     }
-                }else {
-                    Toast.makeText(mContext, R.string.empty_reminder_deletion_warning_message, Toast.LENGTH_LONG).show();
                 }
-            }
-        });
+            });
+        }
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.create().show();
     }

@@ -4,16 +4,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,12 +21,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Objects;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.activities.DisplayReminderNotification;
-import edu.rosehulman.scottae.justcheckingin.fragments.CheckInFragment;
 import edu.rosehulman.scottae.justcheckingin.models.CheckIn;
 
 public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.ViewHolder> {
@@ -86,12 +80,10 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
     }
 
     public static class CheckinDefaultMessageEventListener implements ValueEventListener {
-
-
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            if(dataSnapshot != null){
-                defaultMessage = Objects.requireNonNull(dataSnapshot.getValue()).toString();
+            if (dataSnapshot.getValue() != null) {
+                defaultMessage = dataSnapshot.getValue().toString();
             }
         }
 

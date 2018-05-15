@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: should start add dialog for current fragment
                 switch (mViewPager.getCurrentItem()) {
                     case 0: // check-in
                         Toast.makeText(MainActivity.this, "check-in", Toast.LENGTH_LONG).show();
@@ -96,6 +95,29 @@ public class MainActivity extends AppCompatActivity {
                         AppointmentFragment.showAddEditAppointmentDialog(null);
                         break;
                 }
+            }
+        });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                switch (position) {
+                    case 0:
+                        mFab.setVisibility(View.GONE);
+                        break;
+                    default:
+                        mFab.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                // empty
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // empty
             }
         });
     }
