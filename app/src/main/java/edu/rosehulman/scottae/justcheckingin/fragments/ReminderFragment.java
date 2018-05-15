@@ -1,13 +1,21 @@
 package edu.rosehulman.scottae.justcheckingin.fragments;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +29,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 import edu.rosehulman.scottae.justcheckingin.R;
+import edu.rosehulman.scottae.justcheckingin.activities.DisplayReminderNotification;
 import edu.rosehulman.scottae.justcheckingin.activities.MainActivity;
 import edu.rosehulman.scottae.justcheckingin.adapters.ReminderListAdapter;
 import edu.rosehulman.scottae.justcheckingin.models.Reminder;
+import edu.rosehulman.scottae.justcheckingin.utils.Constants;
+import edu.rosehulman.scottae.justcheckingin.utils.NotificationBroadcastReceiver;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -44,10 +55,10 @@ public class ReminderFragment extends Fragment
     private static EditText titleEditText;
     private static Calendar mCalendar;
     private static Reminder reminderForUpdate;
+    private Reminder r;
 
     public ReminderFragment() {
     }
-
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -145,7 +156,7 @@ public class ReminderFragment extends Fragment
                 hourOfDay,
                 minute,
                 0);
-        Reminder r = new Reminder(titleEditText.getText().toString(), mCalendar.getTime());
+        r = new Reminder(titleEditText.getText().toString(), mCalendar.getTime());
         if (r.getDate().before(new Date())) {
             Toast.makeText(mContext, R.string.invalid_date_time_toast_text, Toast.LENGTH_LONG).show();
         } else if (r.getDate(r.getDate()).equals(r.getDate(new Date()))) {
@@ -153,6 +164,7 @@ public class ReminderFragment extends Fragment
                 adapterToday.update(reminderForUpdate, r.getTitle(), r.getDate());
             else
                 adapterToday.addReminder(r);
+
         } else {
             if (reminderForUpdate != null)
                 adapterUpcoming.update(reminderForUpdate, r.getTitle(), r.getDate());

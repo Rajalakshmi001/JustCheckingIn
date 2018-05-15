@@ -60,5 +60,7 @@
     <string name="default_appointments_comment">appointment comments</string>
     <string name="appointment_comments">Appointment comments</string>
     <string name="empty_appointment_delete_warning_message">Empty appointment can\'t be deleted</string>
+    <string name="reminder_notification_title">Reminder notification title</string>
+    <string name="reminder_image_notification_description">Reminder image</string>
 
 </resources>
