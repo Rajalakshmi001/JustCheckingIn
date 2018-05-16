@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.Date;
 
@@ -50,16 +51,24 @@ public class CheckInFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        final TextView statusText = rootView.findViewById(R.id.check_in_status);
         Button sendNowButton = rootView.findViewById(R.id.send_now_button);
         RecyclerView recyclerView = rootView.findViewById(R.id.check_in_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         checkInListAdapter = new CheckInListAdapter(getContext(), mUserPath);
         recyclerView.setAdapter(checkInListAdapter);
+        for (CheckIn checkin :checkInListAdapter.mCheckIns) {
+            if (checkin.getDate(checkin.getDate()).equals(checkin.getDate(new Date()))) {
+                statusText.setText("You have checked in today!");
+                break;
+            }
+        }
         sendNowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CheckIn checkIn = new CheckIn("Default comment", new Date());
                 checkInListAdapter.add(checkIn);
+                statusText.setText("You have checked in today!");
             }
         });
         return rootView;

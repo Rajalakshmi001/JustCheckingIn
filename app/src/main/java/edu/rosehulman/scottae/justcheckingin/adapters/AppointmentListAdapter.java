@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.fragments.AppointmentFragment;
@@ -40,15 +43,23 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     private boolean mIsToday;
     private Context mContext;
     private DatabaseReference mRef;
+    private DatabaseReference mDefaultReminderRef;
+    public static String defaultReminderTime = "";
+//    private HashMap<String, Integer> hashMap = new HashMap<>();
 
     public AppointmentListAdapter(Context context, String userPath, boolean isToday) {
         mContext = context;
         mAppointmentsToday = new ArrayList<>();
         mAppointmentsUpcoming = new ArrayList<>();
         mIsToday = isToday;
+        mDefaultReminderRef = FirebaseDatabase.getInstance().getReference().child(userPath).child("settings/Default reminder time");
+        mDefaultReminderRef.addValueEventListener(new AppointmentDefaultReminderTimeEventListener());
+        mDefaultReminderRef.keepSynced(true);
         mRef = FirebaseDatabase.getInstance().getReference().child(userPath).child(mContext.getString(R.string.appointments));
         mRef.keepSynced(true);
         mRef.addChildEventListener(new AppointmentsChildEventListener());
+//        hashMap.put("At time of event", 0);
+//        hashMap.put("1 minute before", )
     }
 
     private class AppointmentsChildEventListener implements ChildEventListener {
@@ -152,6 +163,20 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         }
     }
 
+    private class AppointmentDefaultReminderTimeEventListener implements ValueEventListener {
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if (dataSnapshot.getValue() != null) {
+                defaultReminderTime = dataSnapshot.getValue().toString();
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    }
     @NonNull
     @Override
     public AppointmentListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -257,18 +282,38 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     }
 
     private long findDifference(Appointment a) {
-        // FIXME: get correct time from settings
-//        switch (settings value) {
-//            case 0: // 0 minute
-//            case 1: // 1 minutes
-//            case 2: // 30 minutes
-//            case 3: // 1 hour
-//            case 4: // 1 day before
-//        }
         Calendar calendar = Calendar.getInstance();
-        Date d1 = calendar.getTime();
-        Date d2 = a.getDate();
-        long diff = d2.getTime() - d1.getTime();
+        Date d1 = a.getDate();
+        calendar.setTime(d1);
+        Date d2;
+        long diff = 0;
+        switch (defaultReminderTime) {
+            case "At  time of event":
+                d2 = calendar.getTime();
+                diff = d1.getTime()-d2.getTime();
+                break;
+            case  "1 minute before":
+                calendar.add(Calendar.MINUTE, -1);
+                d2 = calendar.getTime();
+                diff = d1.getTime() - d2.getTime();
+                break;
+            case "30 minutes before":
+                calendar.add(Calendar.MINUTE, -30);
+                d2 = calendar.getTime();
+                diff = d1.getTime() - d2.getTime();
+                break;
+            case "1 hour before":
+                calendar.add(Calendar.HOUR, -1);
+                d2 = calendar.getTime();
+                diff = d1.getTime() - d2.getTime();
+                break;
+            case "1 day before":
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                d2 = calendar.getTime();
+                diff = d1.getTime() - d2.getTime();
+                break;
+        }
+        Log.d("AAA", "Time difference is " + diff);
         return (diff / (60 * 1000) % 60) * 60;
     }
 

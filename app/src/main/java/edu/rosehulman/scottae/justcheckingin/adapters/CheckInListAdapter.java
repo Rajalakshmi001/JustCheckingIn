@@ -21,18 +21,21 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.models.CheckIn;
 
 public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.ViewHolder> {
 
-    private ArrayList<CheckIn> mCheckIns;
+    public ArrayList<CheckIn> mCheckIns;
     private Context mContext;
     private static final String KEY_REMINDER_TITLE = "KEY_REMINDER_TITLE";
     private DatabaseReference mCheckinRef;
     private static DatabaseReference mRef;
     public static String defaultMessage = "";
+    private TextView todayCheckinStatusText;
+    private boolean doesCheckinHasToday = false;
 
     public CheckInListAdapter(Context context, String userPath) {
         mContext = context;
@@ -53,6 +56,12 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
             CheckIn checkIn = dataSnapshot.getValue(CheckIn.class);
             mCheckIns.add(checkIn);
             Collections.sort(mCheckIns, Collections.<CheckIn>reverseOrder());
+            for(CheckIn checkin : mCheckIns) {
+                if (checkin.getDate(checkin.getDate()).equals(checkin.getDate(new Date()))) {
+                    doesCheckinHasToday = true;
+                    break;
+                }
+            }
             setSoonAlarm(defaultMessage);
             notifyDataSetChanged();
         }
@@ -64,7 +73,7 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+            mCheckIns.remove(dataSnapshot.getValue(CheckIn.class));
         }
 
         @Override
@@ -96,6 +105,8 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
     @Override
     public CheckInListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.check_in_row_view, parent, false);
+        View checkinView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_main, parent, false);
+        todayCheckinStatusText = checkinView.findViewById(R.id.check_in_status);
         return new ViewHolder(view);
     }
 
@@ -104,6 +115,12 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
         final CheckIn checkin = mCheckIns.get(position);
         holder.mCommentView.setText(checkin.getComment());
         holder.mDateView.setText(checkin.getDate().toString());
+        if(todayCheckinStatusText != null) {
+            if (doesCheckinHasToday)
+                todayCheckinStatusText.setText("You have checked in today!");
+            else
+                todayCheckinStatusText.setText("You have not yet checked-in today yet");
+        }
     }
 
     @Override
@@ -124,6 +141,7 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
     }
 
     public void add(CheckIn checkIn) {
+        checkIn.setComment(defaultMessage);
         mCheckinRef.push().setValue(checkIn);
     }
 

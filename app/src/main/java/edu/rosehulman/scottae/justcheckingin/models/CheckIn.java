@@ -2,7 +2,11 @@ package edu.rosehulman.scottae.justcheckingin.models;
 
 import android.support.annotation.NonNull;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class CheckIn implements Comparable<CheckIn>{
     private String mComment;
@@ -27,6 +31,15 @@ public class CheckIn implements Comparable<CheckIn>{
 
     public Date getDate() {
         return mDate;
+    }
+    public Date getDate(Date date) {
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        try {
+            date = format.parse(format.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
     public void setDate(Date mDate) {
