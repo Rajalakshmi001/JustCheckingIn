@@ -1,15 +1,22 @@
 package edu.rosehulman.scottae.justcheckingin.adapters;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -30,7 +37,7 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
 
     public ArrayList<CheckIn> mCheckIns;
     private Context mContext;
-    private static final String KEY_REMINDER_TITLE = "KEY_REMINDER_TITLE";
+    private static final String KEY_CHECKIN_TITLE = "KEY_CHECKIN_TITLE";
     private DatabaseReference mCheckinRef;
     private static DatabaseReference mRef;
     public static String defaultMessage = "";
@@ -147,8 +154,8 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
 
     private void setSoonAlarm(String  defaultMessage) {
         Intent displayIntent = new Intent(mContext,
-                ReminderListAdapter.DisplayReminderNotification.class);
-        displayIntent.putExtra(KEY_REMINDER_TITLE,  defaultMessage);
+                DisplayCheckInNotification.class);
+        displayIntent.putExtra(KEY_CHECKIN_TITLE,  defaultMessage);
 
         Notification notification = getNotification(displayIntent, defaultMessage);
         NotificationManager manager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -158,12 +165,31 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
 
     private Notification getNotification(Intent intent, String message) {
         Notification.Builder builder = new Notification.Builder(mContext);
-//        builder.setContentTitle("Just Checking-in!");
         builder.setContentTitle(message);
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
         int unusedRequestCode = 0;
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, unusedRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
+        builder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+        builder.setLights(Color.RED, 3000, 3000);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        builder.setSound(alarmSound);
         return builder.build();
+    }
+
+    public class DisplayCheckInNotification extends Activity {
+
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.checkin_notification);
+
+            String title = getIntent().getStringExtra(KEY_CHECKIN_TITLE);
+
+            TextView messageTextView = findViewById(R.id.checkin_title_notification);
+            messageTextView.setText(title);
+            messageTextView.setTextSize(32);
+
+        }
     }
 }

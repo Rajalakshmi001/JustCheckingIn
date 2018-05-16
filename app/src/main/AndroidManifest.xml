@@ -38,6 +38,7 @@
         </activity>
         <activity android:name=".adapters.ReminderListAdapter$DisplayReminderNotification" />
         <activity android:name=".adapters.AppointmentListAdapter$DisplayAppointmentNotification" />
+        <activity android:name=".adapters.CheckInListAdapter$DisplayCheckInNotification" />
 
         <receiver android:name=".utils.NotificationBroadcastReceiver" />
     </application>

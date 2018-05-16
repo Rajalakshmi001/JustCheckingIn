@@ -62,5 +62,9 @@
     <string name="empty_appointment_delete_warning_message">Empty appointment can\'t be deleted</string>
     <string name="reminder_notification_title">Reminder notification title</string>
     <string name="reminder_image_notification_description">Reminder image</string>
+    <string name="check_in_image">Check-in image</string>
+    <string name="check_in_notification_title">Check-in notification title</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 
 </resources>
