@@ -6,9 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import edu.rosehulman.scottae.justcheckingin.adapters.ReminderListAdapter;
-import edu.rosehulman.scottae.justcheckingin.fragments.ReminderFragment;
-
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
     public NotificationBroadcastReceiver() {
@@ -18,8 +15,8 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = intent.getParcelableExtra(ReminderListAdapter.KEY_NOTIFICATION);
-        int id = intent.getIntExtra(ReminderListAdapter.KEY_SOON_NOTIFICATION_ID, 0);
+        Notification notification = intent.getParcelableExtra(Constants.KEY_NOTIFICATION);
+        int id = intent.getIntExtra(Constants.KEY_SOON_NOTIFICATION_ID, 0);
         assert manager != null;
         manager.notify(id, notification);
     }

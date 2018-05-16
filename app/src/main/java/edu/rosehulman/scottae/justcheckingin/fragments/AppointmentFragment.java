@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.zip.Inflater;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.activities.MainActivity;
@@ -89,7 +87,6 @@ public class AppointmentFragment extends Fragment
         appointmentForUpdate = appointment;
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle((appointment == null ? mContext.getString(R.string.add_appointment_title_text) : mContext.getString(R.string.edit_appointment_title_text)));
-        builder.setMessage(R.string.enter_a_title_dialog_message);
         View view =  mInflater.inflate(R.layout.add_appointment_dialog, null, false);
         builder.setView(view);
 
@@ -116,20 +113,19 @@ public class AppointmentFragment extends Fragment
                 dpd.show(((MainActivity) mContext).getFragmentManager(), "Datepickerdialog");
             }
         });
-        builder.setNeutralButton(R.string.delete_button_text, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (appointmentForUpdate != null) {
-                    if (appointmentForUpdate.getDate(appointmentForUpdate.getDate()).equals(appointmentForUpdate.getDate(new Date()))) {
+        if (appointmentForUpdate != null) {
+            builder.setNeutralButton(R.string.delete_button_text, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (appointmentForUpdate.getDate(appointmentForUpdate.getDate())
+                            .equals(appointmentForUpdate.getDate(new Date()))) {
                         adapterToday.remove(appointmentForUpdate);
                     } else {
                         adapterUpcoming.remove(appointmentForUpdate);
                     }
-                }else {
-                    Toast.makeText(mContext, R.string.empty_appointment_delete_warning_message, Toast.LENGTH_LONG).show();
                 }
-            }
-        });
+            });
+        }
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.create().show();
     }

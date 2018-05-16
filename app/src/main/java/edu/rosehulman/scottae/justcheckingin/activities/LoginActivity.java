@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
     private static final int RC_SIGN_IN = 1;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private DatabaseReference mRef; // TODO
+    private DatabaseReference mRef;
     private OnCompleteListener mOnCompleteListener;
     private GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "TAG";
@@ -123,7 +123,8 @@ public class LoginActivity extends AppCompatActivity {//implements MainActivity.
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                 builder.setTitle("User Types");
                 // TODO: edit more info dialog
-                builder.setMessage("Carers ...\nClients ...");
+                builder.setMessage("Carers are admin users. They can add edit, and delete events." +
+                        "\nClients are basic users. They can only respond to check-ins.");
                 builder.create().show();
             }
         });

@@ -36,7 +36,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.DisplayReminderNotification" />
+        <activity android:name=".adapters.ReminderListAdapter$DisplayReminderNotification" />
+        <activity android:name=".adapters.AppointmentListAdapter$DisplayAppointmentNotification" />
+
         <receiver android:name=".utils.NotificationBroadcastReceiver" />
     </application>
 

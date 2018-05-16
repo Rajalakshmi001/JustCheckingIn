@@ -1,7 +1,15 @@
 package edu.rosehulman.scottae.justcheckingin.adapters;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +23,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
 import edu.rosehulman.scottae.justcheckingin.R;
 import edu.rosehulman.scottae.justcheckingin.fragments.AppointmentFragment;
 import edu.rosehulman.scottae.justcheckingin.models.Appointment;
+import edu.rosehulman.scottae.justcheckingin.utils.Constants;
+import edu.rosehulman.scottae.justcheckingin.utils.NotificationBroadcastReceiver;
 
 public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentListAdapter.ViewHolder> {
 
@@ -29,7 +40,6 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     private boolean mIsToday;
     private Context mContext;
     private DatabaseReference mRef;
-    private  Appointment mAppointment;
 
     public AppointmentListAdapter(Context context, String userPath, boolean isToday) {
         mContext = context;
@@ -49,38 +59,60 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
             assert appointment != null;
             appointment.setKey(dataSnapshot.getKey());
             if (mIsToday) {
-                if (appointment.getDate(appointment.getDate()).equals(appointment.getDate(new Date()))) {
+                if (appointment.getDate(appointment.getDate())
+                        .equals(appointment.getDate(new Date()))) {
                     mAppointmentsToday.add(0, appointment);
-                    Collections.sort(mAppointmentsToday);
+                    Collections.sort(mAppointmentsToday, Collections.<Appointment>reverseOrder());
                 }
-            } else if (!appointment.getDate(appointment.getDate()).equals(appointment.getDate(new Date()))) {
+            } else if (!appointment.getDate(appointment.getDate())
+                    .equals(appointment.getDate(new Date()))) {
                 mAppointmentsUpcoming.add(0, appointment);
-                Collections.sort(mAppointmentsUpcoming);
+                Collections.sort(mAppointmentsUpcoming, Collections.<Appointment>reverseOrder());
             }
+            setSoonAlarm(appointment);
             notifyDataSetChanged();
         }
 
+        // FIXME: notification timing might get messed up after edit/delete
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
             String key = dataSnapshot.getKey();
             Appointment updateAppointment = dataSnapshot.getValue(Appointment.class);
             if (updateAppointment.getDate(updateAppointment.getDate())
                     .equals(updateAppointment.getDate(new Date()))) {
-                for (Appointment r : mAppointmentsToday) {
-                    if (r.getKey().equals(key)) {
-                        r.setValues(updateAppointment);
+                for (Appointment a : mAppointmentsToday) {
+                    if (a.getKey().equals(key)) {
+                        a.setValues(updateAppointment);
+                        setSoonAlarm(updateAppointment);
                         notifyDataSetChanged();
                         return;
                     }
                 }
+                mAppointmentsToday.add(updateAppointment);
+                for (Appointment a : mAppointmentsUpcoming) {
+                    if (a.getKey().equals(key)) {
+                        mAppointmentsUpcoming.remove(a);
+                    }
+                }
+                setSoonAlarm(updateAppointment);
+                notifyDataSetChanged();
             } else {
-                for (Appointment r : mAppointmentsUpcoming) {
-                    if (r.getKey().equals(key)) {
-                        r.setValues(updateAppointment);
+                for (Appointment a : mAppointmentsUpcoming) {
+                    if (a.getKey().equals(key)) {
+                        a.setValues(updateAppointment);
+                        setSoonAlarm(updateAppointment);
                         notifyDataSetChanged();
                         return;
                     }
                 }
+                mAppointmentsUpcoming.add(updateAppointment);
+                for (Appointment a : mAppointmentsToday) {
+                    if (a.getKey().equals(key)) {
+                        mAppointmentsToday.remove(a);
+                    }
+                }
+                setSoonAlarm(updateAppointment);
+                notifyDataSetChanged();
             }
         }
 
@@ -130,21 +162,14 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
     @Override
     public void onBindViewHolder(@NonNull AppointmentListAdapter.ViewHolder holder, int position) {
         if (mIsToday) {
-            mAppointment = mAppointmentsToday.get(position);
+            holder.mTitleView.setText(mAppointmentsToday.get(position).getTitle());
+            holder.mDateView.setText(mAppointmentsToday.get(position).getDate().toString());
+            holder.mCommentsView.setText(mAppointmentsToday.get(position).getComments());
         } else {
-            mAppointment = mAppointmentsUpcoming.get(position);
+            holder.mTitleView.setText(mAppointmentsUpcoming.get(position).getTitle());
+            holder.mDateView.setText(mAppointmentsUpcoming.get(position).getDate().toString());
+            holder.mCommentsView.setText(mAppointmentsUpcoming.get(position).getComments());
         }
-        holder.mTitleView.setText(mAppointment.getTitle());
-        holder.mDateView.setText(mAppointment.getDate().toString());
-        holder.mCommentsView.setText(mAppointment.getComments());
-
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AppointmentFragment.showAddEditAppointmentDialog(mAppointment);
-                return false;
-            }
-        });
     }
 
     @Override
@@ -162,16 +187,29 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         TextView mDateView;
         TextView mCommentsView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             mTitleView = itemView.findViewById(R.id.appointment_title);
             mDateView = itemView.findViewById(R.id.appointment_date_text);
             mCommentsView = itemView.findViewById(R.id.appointment_comments_text);
 
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Appointment a;
+                    if (mIsToday) {
+                        a = mAppointmentsToday.get(getAdapterPosition());
+                    } else {
+                        a = mAppointmentsUpcoming.get(getAdapterPosition());
+                    }
+                    AppointmentFragment.showAddEditAppointmentDialog(a);
+                    return false;
+                }
+            });
         }
     }
 
-    public  void addAppointment(Appointment appointment) {
+    public void addAppointment(Appointment appointment) {
         mRef.push().setValue(appointment);
     }
 
@@ -184,5 +222,68 @@ public class AppointmentListAdapter extends RecyclerView.Adapter<AppointmentList
         appointment.setDate(date);
         appointment.setComments(comments);
         mRef.child(appointment.getKey()).setValue(appointment);
+    }
+
+    private void setSoonAlarm(Appointment a) {
+        Intent displayIntent = new Intent(mContext,
+                DisplayAppointmentNotification.class);
+        displayIntent.putExtra(Constants.KEY_REMINDER_TITLE, a.getTitle());
+
+        Notification notification = getNotification(displayIntent, a);
+
+        Intent notificationIntent = new Intent(mContext, NotificationBroadcastReceiver.class);
+        notificationIntent.putExtra(Constants.KEY_NOTIFICATION, notification);
+        notificationIntent.putExtra(Constants.KEY_SOON_NOTIFICATION_ID, 1);
+        int unusedRequestCode = 0;
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, unusedRequestCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        long secondsUntilAlarm = findDifference(a);
+        if (secondsUntilAlarm > 0) {
+            long futureInMills = SystemClock.elapsedRealtime() + secondsUntilAlarm * 1000;
+            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+            assert alarmManager != null;
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMills, pendingIntent);
+        }
+    }
+
+    private Notification getNotification(Intent intent, Appointment a) {
+        Notification.Builder builder = new Notification.Builder(mContext);
+        builder.setContentTitle(a.getTitle());
+        builder.setContentText(a.getComments());
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        int unusedRequestCode = 0;
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, unusedRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        return builder.build();
+    }
+
+    private long findDifference(Appointment a) {
+        // FIXME: get correct time from settings
+//        switch (settings value) {
+//            case 0: // 0 minute
+//            case 1: // 1 minutes
+//            case 2: // 30 minutes
+//            case 3: // 1 hour
+//            case 4: // 1 day before
+//        }
+        Calendar calendar = Calendar.getInstance();
+        Date d1 = calendar.getTime();
+        Date d2 = a.getDate();
+        long diff = d2.getTime() - d1.getTime();
+        return (diff / (60 * 1000) % 60) * 60;
+    }
+
+    public class DisplayAppointmentNotification extends Activity {
+
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.reminder_notification);
+
+            Appointment appointment = getIntent().getParcelableExtra(Constants.KEY_REMINDER_TITLE);
+
+            TextView messageTextView = findViewById(R.id.reminder_title_notification);
+            messageTextView.setText(appointment.getTitle());
+            messageTextView.setTextSize(32);
+        }
     }
 }

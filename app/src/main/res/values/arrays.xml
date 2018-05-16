@@ -31,16 +31,11 @@
     </string-array>
 
     <string-array name="pref_appointment_reminder_time_options">
-        <item>None</item>
         <item>At time of event</item>
-        <item>5 minutes before</item>
-        <item>10 minutes before</item>
-        <item>15 minutes before</item>
+        <item>1 minute before</item>
         <item>30 minutes before</item>
         <item>1 hour before</item>
-        <item>2 hours before</item>
         <item>1 day before</item>
-        <item>1 week before</item>
     </string-array>
 
     <string-array name="pref_appointment_reminder_time_options_values">
@@ -49,11 +44,6 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
     </string-array>
 
     <string-array name="event_context_menu">

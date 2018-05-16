@@ -54,8 +54,8 @@
     <string name="reminders_text">reminders</string>
     <string name="add_appointment_title_text">Add an appointment</string>
     <string name="edit_appointment_title_text">Edit an appointment</string>
-    <string name="add_appointment_title_dialog_text">Add appointment title</string>
-    <string name="enter_comments_for_appointment">Enter comments for appointment</string>
+    <string name="add_appointment_title_dialog_text">Title</string>
+    <string name="enter_comments_for_appointment">Comments</string>
     <string name="appointments">appointments</string>
     <string name="default_appointments_comment">appointment comments</string>
     <string name="appointment_comments">Appointment comments</string>

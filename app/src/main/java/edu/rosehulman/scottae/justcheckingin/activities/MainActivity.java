@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -86,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (mViewPager.getCurrentItem()) {
                     case 0: // check-in
-                        Toast.makeText(MainActivity.this, "check-in", Toast.LENGTH_LONG).show();
                         break;
                     case 1: // reminder
                         ReminderFragment.showAddEditReminderDialog(null);

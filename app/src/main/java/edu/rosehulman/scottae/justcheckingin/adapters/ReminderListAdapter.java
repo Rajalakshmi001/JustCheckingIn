@@ -1,12 +1,15 @@
 package edu.rosehulman.scottae.justcheckingin.adapters;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,9 +29,9 @@ import java.util.Collections;
 import java.util.Date;
 
 import edu.rosehulman.scottae.justcheckingin.R;
-import edu.rosehulman.scottae.justcheckingin.activities.DisplayReminderNotification;
 import edu.rosehulman.scottae.justcheckingin.fragments.ReminderFragment;
 import edu.rosehulman.scottae.justcheckingin.models.Reminder;
+import edu.rosehulman.scottae.justcheckingin.utils.Constants;
 import edu.rosehulman.scottae.justcheckingin.utils.NotificationBroadcastReceiver;
 
 public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapter.ViewHolder> {
@@ -38,12 +41,6 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
     private ArrayList<Reminder> mRemindersUpcoming;
     private boolean mIsToday;
     private DatabaseReference mRef;
-    //    private Reminder mReminder;
-    public static final String KEY_REMINDER_TITLE = "KEY_REMINDER_TITLE";
-    public static final String KEY_NOTIFICATION = "KEY_NOTIFICATION";
-    public static final String KEY_SOON_NOTIFICATION_ID = "KEY_SOON_NOTIFICATION_ID";
-    private static  long SECONDS_UNTIL_ALARM = 0;
-
 
     public ReminderListAdapter(Context context, String userPath, boolean isToday) {
         mContext = context;
@@ -66,11 +63,11 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
             if (mIsToday) {
                 if (reminder.getDate(reminder.getDate()).equals(reminder.getDate(new Date()))) {
                     mRemindersToday.add(reminder);
-                    Collections.sort(mRemindersToday);
+                    Collections.sort(mRemindersToday, Collections.<Reminder>reverseOrder());
                 }
             } else if (!reminder.getDate(reminder.getDate()).equals(reminder.getDate(new Date()))) {
                 mRemindersUpcoming.add(reminder);
-                Collections.sort(mRemindersUpcoming);
+                Collections.sort(mRemindersUpcoming, Collections.<Reminder>reverseOrder());
             }
             setSoonAlarm(reminder);
             notifyDataSetChanged();
@@ -97,6 +94,7 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
                         mRemindersUpcoming.remove(r);
                     }
                 }
+                setSoonAlarm(updateReminder);
                 notifyDataSetChanged();
             } else {
                 for (Reminder r : mRemindersUpcoming) {
@@ -113,6 +111,7 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
                         mRemindersToday.remove(r);
                     }
                 }
+                setSoonAlarm(updateReminder);
                 notifyDataSetChanged();
             }
         }
@@ -163,11 +162,9 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
     @Override
     public void onBindViewHolder(@NonNull ReminderListAdapter.ViewHolder holder, int position) {
         if (mIsToday) {
-//            mReminder = mRemindersToday.get(position);
             holder.mTitleView.setText(mRemindersToday.get(position).getTitle());
             holder.mDateView.setText(mRemindersToday.get(position).getDate().toString());
         } else {
-//            mReminder = mRemindersUpcoming.get(position);
             holder.mTitleView.setText(mRemindersUpcoming.get(position).getTitle());
             holder.mDateView.setText(mRemindersUpcoming.get(position).getDate().toString());
         }
@@ -201,8 +198,6 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
                     } else {
                         r = mRemindersUpcoming.get(getAdapterPosition());
                     }
-
-                    Log.e("AAA", "Current reminder: " + r.getTitle());
                     ReminderFragment.showAddEditReminderDialog(r);
                     return false;
                 }
@@ -227,18 +222,18 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
     private void setSoonAlarm(Reminder r) {
         Intent displayIntent = new Intent(mContext,
                 DisplayReminderNotification.class);
-        displayIntent.putExtra(KEY_REMINDER_TITLE, r.getTitle());
+        displayIntent.putExtra(Constants.KEY_REMINDER_TITLE, r.getTitle());
 
         Notification notification = getNotification(displayIntent, r);
 
         Intent notificationIntent = new Intent(mContext, NotificationBroadcastReceiver.class);
-        notificationIntent.putExtra(KEY_NOTIFICATION, notification);
-        notificationIntent.putExtra(KEY_SOON_NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(Constants.KEY_NOTIFICATION, notification);
+        notificationIntent.putExtra(Constants.KEY_SOON_NOTIFICATION_ID, 1);
         int unusedRequestCode = 0;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, unusedRequestCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        SECONDS_UNTIL_ALARM = findDifference(r);
-        if (SECONDS_UNTIL_ALARM > 0) {
-            long futureInMills = SystemClock.elapsedRealtime() + SECONDS_UNTIL_ALARM * 1000;
+        long secondsUntilAlarm = findDifference(r);
+        if (secondsUntilAlarm > 0) {
+            long futureInMills = SystemClock.elapsedRealtime() + secondsUntilAlarm * 1000;
             AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
             assert alarmManager != null;
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMills, pendingIntent);
@@ -248,7 +243,6 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
     private Notification getNotification(Intent intent, Reminder r) {
         Notification.Builder builder = new Notification.Builder(mContext);
         builder.setContentTitle(r.getTitle());
-//        builder.setContentText(r.getTitle());
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
         int unusedRequestCode = 0;
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, unusedRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -256,11 +250,26 @@ public class ReminderListAdapter extends RecyclerView.Adapter<ReminderListAdapte
         return builder.build();
     }
 
-    private long findDifference(Reminder r ) {
+    private long findDifference(Reminder r) {
         Calendar calendar = Calendar.getInstance();
         Date d1 = calendar.getTime();
         Date d2 = r.getDate();
         long diff = d2.getTime() - d1.getTime();
-        return  (diff /  (60*1000) % 60) * 60;
+        return (diff / (60 * 1000) % 60) * 60;
+    }
+
+    public class DisplayReminderNotification extends Activity {
+
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.reminder_notification);
+
+            Reminder reminder = getIntent().getParcelableExtra(Constants.KEY_REMINDER_TITLE);
+
+            TextView messageTextView = findViewById(R.id.reminder_title_notification);
+            messageTextView.setText(reminder.getTitle());
+            messageTextView.setTextSize(32);
+        }
     }
 }

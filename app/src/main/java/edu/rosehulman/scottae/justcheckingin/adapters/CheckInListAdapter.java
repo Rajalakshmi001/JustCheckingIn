@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import edu.rosehulman.scottae.justcheckingin.R;
-import edu.rosehulman.scottae.justcheckingin.activities.DisplayReminderNotification;
 import edu.rosehulman.scottae.justcheckingin.models.CheckIn;
 
 public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.ViewHolder> {
@@ -53,7 +52,7 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             CheckIn checkIn = dataSnapshot.getValue(CheckIn.class);
             mCheckIns.add(checkIn);
-            Collections.sort(mCheckIns);
+            Collections.sort(mCheckIns, Collections.<CheckIn>reverseOrder());
             setSoonAlarm(defaultMessage);
             notifyDataSetChanged();
         }
@@ -117,7 +116,7 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
         TextView mCommentView;
         TextView mDateView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             mCommentView = itemView.findViewById(R.id.check_in_comment);
             mDateView = itemView.findViewById(R.id.check_in_date_text);
@@ -130,7 +129,7 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
 
     private void setSoonAlarm(String  defaultMessage) {
         Intent displayIntent = new Intent(mContext,
-                DisplayReminderNotification.class);
+                ReminderListAdapter.DisplayReminderNotification.class);
         displayIntent.putExtra(KEY_REMINDER_TITLE,  defaultMessage);
 
         Notification notification = getNotification(displayIntent, defaultMessage);
@@ -141,8 +140,8 @@ public class CheckInListAdapter extends RecyclerView.Adapter<CheckInListAdapter.
 
     private Notification getNotification(Intent intent, String message) {
         Notification.Builder builder = new Notification.Builder(mContext);
-        builder.setContentTitle("Just Checking-in!");
-        builder.setContentText(message);
+//        builder.setContentTitle("Just Checking-in!");
+        builder.setContentTitle(message);
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
         int unusedRequestCode = 0;
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, unusedRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
