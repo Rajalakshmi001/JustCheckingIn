@@ -1,0 +1,4 @@
+# JustCheckingIn
+With the busy schedule of our everyday lives, it becomes difficult to take care of the elderly people in the family who brought us up either because we are busy or we are too exhausted to call. “Just Checking In” is an app that will use current technologies to bridge the gap between the elderly people who need care and the Carers. This will allow individuals to Check-In efficiently and those who need to be checked on less intrusion with the assurance that someone is concerned.
+
+Since elders tend to have forgetfulness as they grow old, they miss taking medications, doctor’s appointments, etc. They also become lonely and feel depressed since they are alone most of the time. This app will help the Carers to remind the person who needs care with different activities which they tend to forget. If there are any health checks that need to be done periodically, the app will facilitate sending customized reminders.
